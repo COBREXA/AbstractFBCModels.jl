@@ -20,7 +20,7 @@ This function declares a vector of filename extensions that are common for
 files that contain the given metabolic model. This is used by [`load`](@ref)
 and [`save`](@ref) to guess the type of the model to load.
 """
-function filename_extensions(::Type{AbstractFBCModel})::Vector{String}
+function filename_extensions(a::Type{AbstractFBCModel})::Vector{String}
     _missing_impl_error(filename_extensions, (a,))
 end
 
