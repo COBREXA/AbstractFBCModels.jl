@@ -3,10 +3,18 @@ $(README)
 """
 module AbstractFBCModels
 
-using DocStringExtensions
+using DocStringExtensions, RequiredInterfaces
 
 include("types.jl")
 include("accessors.jl")
 include("io.jl")
 
-end # module FBCModels
+# define required interface for FBCModel types
+@required AbstractFBCModel begin
+    # IO
+    load(::AbstractFBCModel, ::String)
+    save(::AbstractFBCModel, ::String)
+    filename_extensions(::AbstractFBCModel)
+end
+
+end # module AbstractFBCModel

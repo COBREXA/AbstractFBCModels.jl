@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+RequiredInterfaces = "97f35ef4-7bc5-4ec1-a41a-dcc69c7308c6"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
