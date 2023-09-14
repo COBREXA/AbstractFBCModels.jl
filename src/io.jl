@@ -39,3 +39,9 @@ Load a model from `path`. The type of the model is automatically guessed based
 on the filename extension.
 """
 load(path::String) = load(guess_model_type_from_filename(path), path)
+
+Base.show(io::Base.IO, ::MIME"text/plain", m::AbstractFBCModel) =
+    print(
+        io,
+        "$(typeof(m))(#= $(n_reactions(m)) reactions, $(n_metabolites(m)) metabolites =#)",
+    )
