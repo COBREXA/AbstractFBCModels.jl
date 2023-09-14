@@ -12,9 +12,24 @@ the following accessors must be overloaded for the concrete model type:
 - [`stoichiometry`](@ref)
 - [`bounds`](@ref)
 - [`objective`](@ref)
-"""
-abstract type AbstractMetabolicModel end
 
+To support model IO, you should overload:
+- [`load`](@ref)
+- [`save`](@ref)
+- [`filename_extensions`](@ref)
+
+To allow easy conversion between the model types, you should additionally
+implement `convert` that converts any `AbstractFBCModel` to your model
+type; e.g., for an example type `MyModel` roughly as:
+```
+function Base.convert(::Type{MyModel}, x::AbstractFBCModel)
+    return ...
+end
+```
+"""
+abstract type AbstractFBCModel end
+
+_missing_impl_error(m, a) = throw(MethodError(m, a))
 
 """
     $(TYPEDEF)

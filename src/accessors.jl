@@ -1,6 +1,4 @@
 
-_missing_impl_error(m, a) = throw(MethodError(m, a))
-
 """
 $(TYPEDSIGNATURES)
 
@@ -13,7 +11,7 @@ modeling, such as metabolite exchanges, separate forward and reverse reactions,
 supplies of enzymatic and genetic material and virtual cell volume, etc. To
 simplify the view of the model contents use [`reaction_flux`](@ref).
 """
-function reactions(a::MetabolicModel)::Vector{String}
+function reactions(a::AbstractFBCModel)::Vector{String}
     _missing_impl_error(reactions, (a,))
 end
 
@@ -26,7 +24,7 @@ corresponds to the rows in [`stoichiometry`](@ref) matrix.
 As with [`reactions`](@ref)s, some metabolites in models may be virtual,
 representing purely technical equality constraints.
 """
-function metabolites(a::MetabolicModel)::Vector{String}
+function metabolites(a::AbstractFBCModel)::Vector{String}
     _missing_impl_error(metabolites, (a,))
 end
 
@@ -35,7 +33,7 @@ $(TYPEDSIGNATURES)
 
 Get the number of reactions in a model.
 """
-function n_reactions(a::MetabolicModel)::Int
+function n_reactions(a::AbstractFBCModel)::Int
     length(reactions(a))
 end
 
@@ -44,7 +42,7 @@ $(TYPEDSIGNATURES)
 
 Get the number of metabolites in a model.
 """
-function n_metabolites(a::MetabolicModel)::Int
+function n_metabolites(a::AbstractFBCModel)::Int
     length(metabolites(a))
 end
 
@@ -59,7 +57,7 @@ model `m` is defined as satisfying the equations:
 - `y .<= ubs`
 - `(lbs, ubs) == bounds(m)
 """
-function stoichiometry(a::MetabolicModel)::SparseMat
+function stoichiometry(a::AbstractFBCModel)::SparseMat
     _missing_impl_error(stoichiometry, (a,))
 end
 
@@ -68,7 +66,7 @@ $(TYPEDSIGNATURES)
 
 Get the lower and upper solution bounds of a model.
 """
-function bounds(a::MetabolicModel)::Tuple{Vector{Float64},Vector{Float64}}
+function bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}}
     _missing_impl_error(bounds, (a,))
 end
 
@@ -77,7 +75,7 @@ $(TYPEDSIGNATURES)
 
 Get the sparse balance vector of a model.
 """
-function balance(a::MetabolicModel)::SparseVec
+function balance(a::AbstractFBCModel)::SparseVec
     return spzeros(n_metabolites(a))
 end
 
@@ -88,7 +86,7 @@ Get the objective vector of the model. Analysis functions, such as
 [`flux_balance_analysis`](@ref), are supposed to maximize `dot(objective, x)`
 where `x` is a feasible solution of the model.
 """
-function objective(a::MetabolicModel)::SparseVec
+function objective(a::AbstractFBCModel)::SparseVec
     _missing_impl_error(objective, (a,))
 end
 
@@ -98,7 +96,7 @@ $(TYPEDSIGNATURES)
 Get a matrix of coupling constraint definitions of a model. By default, there
 is no coupling in the models.
 """
-function coupling(a::MetabolicModel)::SparseMat
+function coupling(a::AbstractFBCModel)::SparseMat
     return spzeros(0, n_reactions(a))
 end
 
@@ -107,7 +105,7 @@ $(TYPEDSIGNATURES)
 
 Get the number of coupling constraints in a model.
 """
-function n_coupling_constraints(a::MetabolicModel)::Int
+function n_coupling_constraints(a::AbstractFBCModel)::Int
     size(coupling(a), 1)
 end
 
@@ -117,7 +115,7 @@ $(TYPEDSIGNATURES)
 Get the lower and upper bounds for each coupling bound in a model, as specified
 by `coupling`. By default, the model does not have any coupling bounds.
 """
-function coupling_bounds(a::MetabolicModel)::Tuple{Vector{Float64},Vector{Float64}}
+function coupling_bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}}
     return (spzeros(0), spzeros(0))
 end
 
@@ -130,7 +128,7 @@ no genes.
 In SBML, these are usually called "gene products" but we write `genes` for
 simplicity.
 """
-function genes(a::MetabolicModel)::Vector{String}
+function genes(a::AbstractFBCModel)::Vector{String}
     return []
 end
 
@@ -141,7 +139,7 @@ Return the number of genes in the model (as returned by [`genes`](@ref)). If
 you just need the number of the genes, this may be much more efficient than
 calling [`genes`](@ref) and measuring the array.
 """
-function n_genes(a::MetabolicModel)::Int
+function n_genes(a::AbstractFBCModel)::Int
     return length(genes(a))
 end
 
@@ -155,7 +153,7 @@ For simplicity, `nothing` may be returned, meaning that the reaction always
 takes place. (in DNF, that would be equivalent to returning `[[]]`.)
 """
 function reaction_gene_association(
-    a::MetabolicModel,
+    a::AbstractFBCModel,
     reaction_id::String,
 )::Maybe{GeneAssociation}
     return nothing
@@ -167,7 +165,7 @@ $(TYPEDSIGNATURES)
 Return the subsystem of reaction `reaction_id` in `model` if it is assigned. If not,
 return `nothing`.
 """
-function reaction_subsystem(model::MetabolicModel, reaction_id::String)::Maybe{String}
+function reaction_subsystem(model::AbstractFBCModel, reaction_id::String)::Maybe{String}
     return nothing
 end
 
@@ -177,7 +175,7 @@ $(TYPEDSIGNATURES)
 Return the stoichiometry of reaction with ID `rid` in the model. The dictionary
 maps the metabolite IDs to their stoichiometric coefficients.
 """
-function reaction_stoichiometry(m::MetabolicModel, rid::String)::Dict{String,Float64}
+function reaction_stoichiometry(m::AbstractFBCModel, rid::String)::Dict{String,Float64}
     mets = metabolites(m)
     Dict(
         mets[k] => v for
@@ -192,7 +190,7 @@ Return the formula of metabolite `metabolite_id` in `model`.
 Return `nothing` in case the formula is not known or irrelevant.
 """
 function metabolite_formula(
-    model::MetabolicModel,
+    model::AbstractFBCModel,
     metabolite_id::String,
 )::Maybe{MetaboliteFormula}
     return nothing
@@ -204,7 +202,7 @@ $(TYPEDSIGNATURES)
 Return the charge associated with metabolite `metabolite_id` in `model`.
 Returns `nothing` if charge not present.
 """
-function metabolite_charge(model::MetabolicModel, metabolite_id::String)::Maybe{Int}
+function metabolite_charge(model::AbstractFBCModel, metabolite_id::String)::Maybe{Int}
     return nothing
 end
 
@@ -214,7 +212,7 @@ $(TYPEDSIGNATURES)
 Return the compartment of metabolite `metabolite_id` in `model` if it is assigned. If not,
 return `nothing`.
 """
-function metabolite_compartment(model::MetabolicModel, metabolite_id::String)::Maybe{String}
+function metabolite_compartment(model::AbstractFBCModel, metabolite_id::String)::Maybe{String}
     return nothing
 end
 
@@ -223,18 +221,18 @@ $(TYPEDSIGNATURES)
 
 Return the name of reaction with ID `rid`.
 """
-reaction_name(model::MetabolicModel, rid::String) = nothing
+reaction_name(model::AbstractFBCModel, rid::String) = nothing
 
 """
 $(TYPEDSIGNATURES)
 
 Return the name of metabolite with ID `mid`.
 """
-metabolite_name(model::MetabolicModel, mid::String) = nothing
+metabolite_name(model::AbstractFBCModel, mid::String) = nothing
 
 """
 $(TYPEDSIGNATURES)
 
 Return the name of gene with ID `gid`.
 """
-gene_name(model::MetabolicModel, gid::String) = nothing
+gene_name(model::AbstractFBCModel, gid::String) = nothing
