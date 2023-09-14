@@ -2,34 +2,12 @@
 """
     $(TYPEDEF)
 
-A helper supertype of everything usable as a flux-based constrained linear
-metabolic model.
+A helper supertype of flux balanace based metabolic model.
 
-To be functional in most packages that use AbstractFBCModel as an interface,
-the following accessors must be overloaded for the concrete model type:
-- [`reactions`](@ref)
-- [`metabolites`](@ref)
-- [`stoichiometry`](@ref)
-- [`bounds`](@ref)
-- [`objective`](@ref)
-
-To support model IO, you should overload:
-- [`load`](@ref)
-- [`save`](@ref)
-- [`filename_extensions`](@ref)
-
-To allow easy conversion between the model types, you should additionally
-implement `convert` that converts any `AbstractFBCModel` to your model
-type; e.g., for an example type `MyModel` roughly as:
-```
-function Base.convert(::Type{MyModel}, x::AbstractFBCModel)
-    return ...
-end
-```
+To create concrete subtypes, it is required to implement all the functions
+listed in the module definition.
 """
 abstract type AbstractFBCModel end
-
-_missing_impl_error(m, a) = throw(MethodError(m, a))
 
 """
     $(TYPEDEF)
@@ -55,5 +33,46 @@ Dictionary of atoms and their abundances in a molecule.
 """
 const MetaboliteFormula = Dict{String,Int}
 
+"""
+A shortname for a sparse matrix.
+"""
 const SparseMat = SparseMatrixCSC{Float64,Int}
+
+"""
+A shortname for a sparse vector.
+"""
 const SparseVec = SparseVector{Float64,Int}
+
+"""
+    GeneAssociationsDNF = Vector{Vector{String}}
+
+Disjunctive normal form of simple gene associations. For example, `[[A, B],
+[B]]` represents two isozymes where the first requires both genes `A` and `B`,
+while the second isozyme only requires gene `C`.
+
+This string representation is typically used to represent gene reaction rules,
+but does not contain any subunit stoichiometry of kinetic information of the
+isozymes. See [`Isozyme`}(@ref) for a more complete structure.
+"""
+const GeneAssociationsDNF = Vector{Vector{String}}
+
+"""
+    Annotations = Dict{String,Vector{String}}
+
+Dictionary used to store (possible multiple) standardized annotations of
+something, such as a [`Metabolite`](@ref) and a [`Reaction`](@ref).
+
+# Example
+```
+Annotations("PubChem" => ["CID12345", "CID54321"])
+```
+"""
+const Annotations = Dict{String,Vector{String}}
+
+"""
+    Notes = Dict{String,Vector{String}}
+
+Free-form notes about something (e.g. a [`Gene`](@ref)), categorized by
+"topic".
+"""
+const Notes = Dict{String,Vector{String}}

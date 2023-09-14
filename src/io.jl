@@ -1,44 +1,42 @@
 
 """
-$(TYPEDSIGNATURES)
+    `load(a::Type{AbstractFBCModel}, path::String)::Nothing`
+
+Load a flux balance model from `path`.
 """
-function load(a::Type{AbstractFBCModel}, path::String)
-    _missing_impl_error(load, (a,))
-end
+function load end
 
 """
-$(TYPEDSIGNATURES)
+    `save(a::AbstractFBCModel, path::String)::Nothing`
+
+Save a flux balance model to `path`.
 """
-function save(a::AbstractFBCModel, path::String)
-    _missing_impl_error(save, (a,))
-end
+function save end
 
 """
-$(TYPEDSIGNATURES)
+    `filename_extensions(a::Type{AbstractFBCModel})::Vector{String}`
 
-This function declares a vector of filename extensions that are common for
-files that contain the given metabolic model. This is used by [`load`](@ref)
-and [`save`](@ref) to guess the type of the model to load.
+This function declares a vector of filename extensions that are common for files
+that contain the given metabolic model. This is used by [`load`](@ref) to guess
+the type of the model to load.
 """
-function filename_extensions(a::Type{AbstractFBCModel})::Vector{String}
-    _missing_impl_error(filename_extensions, (a,))
-end
+function filename_extensions end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function guess_model_type_from_filename(path::String)
-    #TODO
-    error("filename extension not recognized")
-end
+# """
+# $(TYPEDSIGNATURES)
+# """
+# function guess_model_type_from_filename(path::String)
+#     # TODO
+#     error("filename extension not recognized")
+# end
 
-"""
-$(TYPEDSIGNATURES)
+# """
+# $(TYPEDSIGNATURES)
 
-Load a model from `path`. The type of the model is automatically guessed based
-on the filename extension.
-"""
-load(path::String) = load(guess_model_type_from_filename(path), path)
+# Load a model from `path`. The type of the model is automatically guessed based
+# on the filename extension.
+# """
+# load(path::String) = load(guess_model_type_from_filename(path), path)
 
 Base.show(io::Base.IO, ::MIME"text/plain", m::AbstractFBCModel) =
     print(
