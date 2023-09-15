@@ -10,7 +10,7 @@ include("accessors.jl")
 include("io.jl")
 
 # define required interface for FBCModel types
-@required AbstractFBCModel begin
+R.@required AbstractFBCModel begin
     # IO
     load(::AbstractFBCModel, ::String)
     save(::AbstractFBCModel, ::String)
