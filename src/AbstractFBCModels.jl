@@ -1,7 +1,7 @@
 """
 $(README)
 """
-module FBCModels
+module AbstractFBCModels
 
 using DocStringExtensions
 

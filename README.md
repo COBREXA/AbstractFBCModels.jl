@@ -1,3 +1,3 @@
 
-# FBCModels.jl
+# AbstractFBCModels.jl
 
