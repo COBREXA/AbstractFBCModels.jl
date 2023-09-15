@@ -3,7 +3,9 @@ $(README)
 """
 module AbstractFBCModels
 
-using DocStringExtensions, RequiredInterfaces
+using DocStringExtensions
+
+import RequiredInterfaces as R
 
 include("types.jl")
 include("accessors.jl")
