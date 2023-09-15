@@ -29,8 +29,6 @@ end
 """
 abstract type AbstractFBCModel end
 
-_missing_impl_error(m, a) = throw(MethodError(m, a))
-
 """
     $(TYPEDEF)
 
@@ -55,5 +53,12 @@ Dictionary of atoms and their abundances in a molecule.
 """
 const MetaboliteFormula = Dict{String,Int}
 
+"""
+A shortname for a sparse matrix.
+"""
 const SparseMat = SparseMatrixCSC{Float64,Int}
+
+"""
+A shortname for a sparse vector.
+"""
 const SparseVec = SparseVector{Float64,Int}
