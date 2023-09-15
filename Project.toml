@@ -1,6 +1,6 @@
-name = "FBCModels"
+name = "AbstractFBCModels"
 uuid = "5a4f3dfa-1789-40f8-8221-69268c29937c"
-authors = ["Authors of FBCModels.jl"]
+authors = ["Authors of AbstractFBCModels.jl"]
 version = "0.1.0"
 
 [deps]
