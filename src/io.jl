@@ -38,8 +38,7 @@ function filename_extensions end
 # """
 # load(path::String) = load(guess_model_type_from_filename(path), path)
 
-Base.show(io::Base.IO, ::MIME"text/plain", m::AbstractFBCModel) =
-    print(
-        io,
-        "$(typeof(m))(#= $(n_reactions(m)) reactions, $(n_metabolites(m)) metabolites =#)",
-    )
+Base.show(io::Base.IO, ::MIME"text/plain", m::AbstractFBCModel) = print(
+    io,
+    "$(typeof(m))(#= $(n_reactions(m)) reactions, $(n_metabolites(m)) metabolites =#)",
+)
