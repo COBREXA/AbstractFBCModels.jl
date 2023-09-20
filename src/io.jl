@@ -1,23 +1,23 @@
 
 """
-    `load(a::Type{AbstractFBCModel}, path::String)::Nothing`
+    load(a::Type{AbstractFBCModel}, path::String)::Nothing
 
-Load a flux balance model from `path`.
+Load a flux balance model from path.
 """
 function load end
 
 """
-    `save(a::AbstractFBCModel, path::String)::Nothing`
+    save(a::AbstractFBCModel, path::String)::Nothing
 
-Save a flux balance model to `path`.
+Save a flux balance model to path.
 """
 function save end
 
 """
-    `filename_extensions(a::Type{AbstractFBCModel})::Vector{String}`
+    filename_extensions(a::Type{AbstractFBCModel})::Vector{String}
 
 This function declares a vector of filename extensions that are common for files
-that contain the given metabolic model. This is used by [`load`](@ref) to guess
+that contain the given metabolic model. This is used by [load](@ref) to guess
 the type of the model to load.
 """
 function filename_extensions end
@@ -33,7 +33,7 @@ function filename_extensions end
 # """
 # $(TYPEDSIGNATURES)
 
-# Load a model from `path`. The type of the model is automatically guessed based
+# Load a model from path. The type of the model is automatically guessed based
 # on the filename extension.
 # """
 # load(path::String) = load(guess_model_type_from_filename(path), path)
