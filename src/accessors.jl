@@ -87,12 +87,12 @@ Get the objective vector of the model.
 function objective end
 
 """
-    reaction_gene_association(a::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociation}
+    reaction_gene_associations(a::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociation}
 
 Returns the sets of genes that need to be present so that the reaction can work
 (technically, a DNF on gene availability, with positive atoms only).
 """
-function reaction_gene_association end
+function reaction_gene_associations end
 
 """
     reaction_stoichiometry(m::AbstractFBCModel, rid::String)::Dict{String,Float64}

@@ -36,7 +36,7 @@ R.@required AbstractFBCModel begin
     balance(::AbstractFBCModel)
     objective(::AbstractFBCModel)
     # reaction annotations
-    reaction_gene_association(::AbstractFBCModel,::String)
+    reaction_gene_associations(::AbstractFBCModel,::String)
     reaction_stoichiometry(::AbstractFBCModel, ::String)
     reaction_annotations(::AbstractFBCModel, ::String)
     reaction_notes(::AbstractFBCModel, ::String)
@@ -69,7 +69,7 @@ export load,
     bounds,
     balance,
     objective,
-    reaction_gene_association,
+    reaction_gene_associations,
     reaction_stoichiometry,
     reaction_annotations,
     reaction_notes,
