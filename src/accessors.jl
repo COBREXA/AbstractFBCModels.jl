@@ -197,9 +197,9 @@ Return the name of gene with ID gid.
 function gene_name end
 
 """
-    convert(T::Type{AbstractFBCModel}, model::AbstractFBCModel)::M where M <: AbstractFBCModel
+    convert(::Type{M}, model::AbstractFBCModel)::M where M <: AbstractFBCModel
 
-Convert model to type T.
+Convert an [`AbstractFBCModel`](@ref) model to a given type.
 """
 function convert end
 
