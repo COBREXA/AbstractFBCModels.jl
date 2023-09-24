@@ -4,7 +4,7 @@ $(TYPEDSIGNATURES)
 
 Load a model from path.
 """
-function load(::Type{A}, path::String) where A <: AbstractFBCModel
+function load(::Type{A}, path::String) where {A<:AbstractFBCModel}
     unimplemented(A, :load)
 end
 
@@ -22,7 +22,7 @@ A vector of filename extensions that are common for files that contain the
 given metabolic model type. This is used by [`load`](@ref) to guess the type of
 the model that should be loaded.
 """
-function filename_extensions(::Type{A}) where A <: AbstractFBCModel
+function filename_extensions(::Type{A}) where {A<:AbstractFBCModel}
     unimplemented(A, :filename_extensions)
 end
 
@@ -33,7 +33,7 @@ Find which of the known subtypes of [`AbstractFBCModel`](@ref) would typically
 be able to open the file at `path`, using information in `filename_extensions`.
 """
 eligible_model_types_for_filename(path::String) =
-    [t for t = subtypes(A) if any(x -> endswith(".$x", path), filename_extensions(t))]
+    [t for t in subtypes(A) if any(x -> endswith(".$x", path), filename_extensions(t))]
 
 """
 $(TYPEDSIGNATURES)

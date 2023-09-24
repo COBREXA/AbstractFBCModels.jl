@@ -77,7 +77,8 @@ $(TYPEDSIGNATURES)
 
 Get the lower and upper bounds of all reactions in a model.
 """
-bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} = unimplemented(typeof(a), :bounds)
+bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
+    unimplemented(typeof(a), :bounds)
 
 """
 $(TYPEDSIGNATURES)
@@ -105,7 +106,11 @@ be a function of a single `String` argument that returns `Bool`.
 Generally it may be simpler to use [`reaction_gene_association_dnf`](@ref), but
 in many models the complexity of the conversion to DNF is prohibitive.
 """
-reaction_gene_products_available(::AbstractFBCModel,reaction_id::String,gene_product_available::Function)::Maybe{Bool} = nothing
+reaction_gene_products_available(
+    ::AbstractFBCModel,
+    reaction_id::String,
+    gene_product_available::Function,
+)::Maybe{Bool} = nothing
 
 """
 $(TYPEDSIGNATURES)
@@ -114,7 +119,10 @@ Returns the sets of genes that need to be present for the reaction to work in a
 DNF formula. This helps for constructively using the reaction-gene-association
 information.
 """
-reaction_gene_association_dnf(::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociationDNF} = nothing
+reaction_gene_association_dnf(
+    ::AbstractFBCModel,
+    reaction_id::String,
+)::Maybe{GeneAssociationDNF} = nothing
 
 """
 $(TYPEDSIGNATURES)
@@ -125,7 +133,8 @@ maps the metabolite IDs to their stoichiometric coefficients.
 Using this function may be more efficient in cases than loading the whole
 [`stoichiometry`](@ref).
 """
-reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64} = unimplemented(typeof(a), :reaction_stoichiometry)
+reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64} =
+    unimplemented(typeof(a), :reaction_stoichiometry)
 
 """
 $(TYPEDSIGNATURES)
@@ -158,7 +167,8 @@ $(TYPEDSIGNATURES)
 The formula of the given metabolite in the model, or `nothing` in case the
 formula is not recorded.
 """
-metabolite_formula(::AbstractFBCModel, metabolite_id::String)::Maybe{MetaboliteFormula} = nothing
+metabolite_formula(::AbstractFBCModel, metabolite_id::String)::Maybe{MetaboliteFormula} =
+    nothing
 
 """
 $(TYPEDSIGNATURES)
@@ -174,7 +184,7 @@ $(TYPEDSIGNATURES)
 The compartment of the given metabolite in the model. `nothing` if no
 compartment is assigned.
 """
-metabolite_compartment(::AbstractFBCModel,metabolite_id::String)::Maybe{String} = nothing
+metabolite_compartment(::AbstractFBCModel, metabolite_id::String)::Maybe{String} = nothing
 
 """
 $(TYPEDSIGNATURES)
@@ -184,7 +194,7 @@ dictionary should assigns vectors of possible identifiers to identifier system
 names, such as `"ChEMBL" => ["123"]` or
 `"PubChem" => ["CID123", "CID654645645"]`.
 """
-metabolite_annotations(::AbstractFBCModel, metabolite_id::String,)::Annotations = Dict()
+metabolite_annotations(::AbstractFBCModel, metabolite_id::String)::Annotations = Dict()
 
 """
 $(TYPEDSIGNATURES)

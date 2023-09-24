@@ -4,7 +4,8 @@ import SHA: sha256
 import Test: @testset, @test
 import InteractiveUtils: methodswith
 
-unimplemented(t::Type, x::Symbol) = error("AbstractFBCModels interface method $x is not implemented for type $t")
+unimplemented(t::Type, x::Symbol) =
+    error("AbstractFBCModels interface method $x is not implemented for type $t")
 
 """
 $(TYPEDSIGNATURES)
@@ -18,7 +19,7 @@ You should implement these as well.
 """
 function accessors()
     ms = Method[]
-    for nm = names(AbstractFBCModels; all = true)
+    for nm in names(AbstractFBCModels; all = true)
         f = getfield(AbstractFBCModels, nm)
         if isa(f, Base.Callable)
             methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
@@ -91,7 +92,7 @@ function run_fbcmodel_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
         @test size(S) == (length(mets), length(rxns))
         @test length(balance(model)) == size(S, 1)
         bs = bounds(model)
-        @test bs isa Tuple{Vector{Float64}, Vector{Float64}}
+        @test bs isa Tuple{Vector{Float64},Vector{Float64}}
         lbs, ubs = bs
         @test length(lbs) == size(S, 2)
         @test length(ubs) == size(S, 2)
