@@ -4,11 +4,8 @@ $(README)
 module AbstractFBCModels
 
 using DocStringExtensions
-using SparseArrays
-using Downloads, SHA, SBML
 
 import RequiredInterfaces as R
-import PikaParser as PP
 
 include("types.jl")
 include("accessors.jl")
