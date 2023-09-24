@@ -35,6 +35,7 @@ Get the number of metabolites in a model.
 """
 function n_metabolites end
 
+# TODO some models do not provide genes; fallback to safe defaults here.
 """
     genes(a::AbstractFBCModel)::Vector{String}
 
@@ -86,6 +87,7 @@ Get the objective vector of the model.
 """
 function objective end
 
+# TODO some models know no associations and other details; provide good fallbacks here.
 """
     reaction_gene_associations(a::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociation}
 
@@ -202,4 +204,3 @@ function gene_name end
 Convert an [`AbstractFBCModel`](@ref) model to a given type.
 """
 function convert end
-
