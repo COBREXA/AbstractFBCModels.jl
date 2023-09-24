@@ -2,31 +2,25 @@
 using SparseArrays
 
 """
-    $(TYPEDEF)
+$(TYPEDEF)
 
-A helper supertype of flux balanace based metabolic model.
+A supertype of all Flux-balance-Based Constrained metabolic models that share
+the common interface defined by `AbstractFBCModels.jl`.
 
-To create concrete subtypes, it is required to implement all the functions
-listed in the module definition.
+To use the interface for your type, make it a subtype of
+[`AbstractFBCModel`](@ref) and provide methods for various functions used with
+the model. Use [`accessors`](@ref) to find the current list of
+methods, and utilize [`run_fbcmodel_tests`](@ref) to test the completeness and
+compatibility of your interface with the assumptions of the interface.
 """
 abstract type AbstractFBCModel end
 
 """
-    $(TYPEDEF)
+$(TYPEDEF)
 
 A nice name for a "nullable" type.
 """
 const Maybe{T} = Union{Nothing,T}
-
-"""
-    GeneAssociation = Vector{Vector{String}}
-
-An association to genes, represented as a logical formula in a positive
-disjunctive normal form (DNF). (The 2nd-level vectors of strings are connected
-by "and" to form conjunctions, and the 1st-level vectors of these conjunctions
-are connected by "or" to form the DNF.)
-"""
-const GeneAssociation = Vector{Vector{String}}
 
 """
     MetaboliteFormula = Dict{String,Int}
@@ -49,12 +43,9 @@ const SparseVec = SparseVector{Float64,Int}
     GeneAssociationsDNF = Vector{Vector{String}}
 
 Disjunctive normal form of simple gene associations. For example, `[[A, B],
-[B]]` represents two isozymes where the first requires both genes `A` and `B`,
-while the second isozyme only requires gene `C`.
-
-This string representation is typically used to represent gene reaction rules,
-but does not contain any subunit stoichiometry of kinetic information of the
-isozymes. See [`Isozyme`}(@ref) for a more complete structure.
+[B]]` represents two possibilities to run a given reaction, where the first
+requires both gene products `A` and `B`, while the second possibility only
+requires gene product `C`.
 """
 const GeneAssociationsDNF = Vector{Vector{String}}
 

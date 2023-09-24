@@ -1,6 +1,31 @@
 
 import Downloads: download
 import SHA: sha256
+import Test: @testset, @test
+import InteractiveUtils: methodswith
+
+unimplemented(t::Type, x::Symbol) = error("AbstractFBCModels interface method $x is not implemented for type $t")
+
+"""
+$(TYPEDSIGNATURES)
+
+Provide a `methodswith`-style listing of accessors that the model implementors
+should implement.
+
+For typesystem reasons, the list **will not contain** methods for
+[`save`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
+You should implement these as well.
+"""
+function accessors()
+    ms = Method[]
+    for nm = names(AbstractFBCModels; all = true)
+        f = getfield(AbstractFBCModels, nm)
+        if isa(f, Base.Callable)
+            methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
+        end
+    end
+    ms
+end
 
 """
 $(TYPEDSIGNATURES)
@@ -43,8 +68,10 @@ The function uses the testing infrastructure from `Test` to report problems --
 it is supposed to be a part of larger test-sets, preferably in all model
 implementation packages.
 """
-function run_basic_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
+function run_fbcmodel_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
     @testset "Model type $X in file $path" begin
+        # TODO optionally download the file as given by kwargs
+
         model = load(X, path)
         @test model isa X
 

@@ -1,206 +1,226 @@
 
 """
-    reactions(a::AbstractFBCModel)::Vector{String}
+$(TYPEDSIGNATURES)
 
 Return a vector of reaction identifiers in a model.
 
 For technical reasons, the "reactions" may sometimes not be true reactions but
 various virtual and helper pseudo-reactions that are used in the metabolic
-modeling, such as metabolite exchanges, separate forward and reverse reactions,
-supplies of enzymatic and genetic material and virtual cell volume, etc.
+modeling, such as metabolite exchanges, separated forward and reverse reaction
+directions, supplies of enzymatic and genetic material and virtual cell volume,
+etc.
 """
-function reactions end
+reactions(a::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :reactions)
 
 """
-    n_reactions(a::AbstractFBCModel)::Int
+$(TYPEDSIGNATURES)
 
-Get the number of reactions in a model.
+The number of reactions in the given model. Must be equal to the length of the
+vector returned by [`reactions`](@ref), and may be more efficient for just
+determining the size.
 """
-function n_reactions end
+n_reactions(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_reactions)
 
 """
-    metabolites(a::AbstractFBCModel)::Vector{String}
+$(TYPEDSIGNATURES)
 
 Return a vector of metabolite identifiers in a model. 
 
-As with [reactions](@ref)s, some metabolites in models may be virtual,
+As with [`reactions`](@ref), some metabolites in models may be virtual,
 representing purely technical equality constraints.
 """
-function metabolites end
+metabolites(a::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :metabolites)
 
 """
-    n_metabolites(a::AbstractFBCModel)::Int
+$(TYPEDSIGNATURES)
 
-Get the number of metabolites in a model.
+The number of metabolites in the given model. Must be equal to the length of
+the vector returned by [`metabolites`](@ref), and may be more efficient for
+just determining the size.
 """
 function n_metabolites end
+n_metabolites(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_metabolites)
 
-# TODO some models do not provide genes; fallback to safe defaults here.
 """
-    genes(a::AbstractFBCModel)::Vector{String}
+$(TYPEDSIGNATURES)
 
 Return identifiers of all genes contained in the model. Empty if none.
 
 Genes are also sometimes called "gene products" but we write genes for
 simplicity.
 """
-function genes end
+genes(::AbstractFBCModel)::Vector{String} = String[]
 
 """
-    n_genes(a::AbstractFBCModel)::Int
+$(TYPEDSIGNATURES)
 
-Return the number of genes in the model (as returned by [genes](@ref)). If
-you just need the number of the genes, this may be much more efficient than
-calling [genes](@ref) and measuring the array.
+The number of genes in the model (must be equal to the length of vector given
+by [`genes`](@ref)).
+
+This may be more efficient than calling [`genes`](@ref) and measuring the
+array.
 """
-function n_genes end
-
-"""
-    stoichiometry(a::AbstractFBCModel)::SparseMat
-
-Get the sparse stoichiometric matrix of a model. 
-
-This usually corresponds to all the equality constraints, and has dimensions of
-[n_metabolites](@ref) by [n_reactions](@ref).
-"""
-function stoichiometry end
+n_genes(::AbstractFBCModel)::Int = 0
 
 """
-    bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}}
+$(TYPEDSIGNATURES)
 
-Get the lower and upper bounds of the reactions in a model.
+The sparse stoichiometric matrix of a given model. 
+
+This usually corresponds to all the equality constraints in the model. The
+matrix must be of size [`n_metabolites`](@ref) by [`n_reactions`](@ref).
 """
-function bounds end
+stoichiometry(a::AbstractFBCModel)::SparseMat = unimplemented(typeof(a), :stoichiometry)
 
 """
-    balance(a::AbstractFBCModel)::SparseVec
+$(TYPEDSIGNATURES)
+
+Get the lower and upper bounds of all reactions in a model.
+"""
+bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} = unimplemented(typeof(a), :bounds)
+
+"""
+$(TYPEDSIGNATURES)
 
 Get the sparse balance vector of a model, which usually corresponds to the
 accumulation term associated with stoichiometric matrix.
 """
-function balance end
+balance(a::AbstractFBCModel)::SparseVec = spzeros(length(n_metabolites(a)))
 
 """
-    objective(a::AbstractFBCModel)::SparseVec
+$(TYPEDSIGNATURES)
 
 Get the objective vector of the model.
 """
-function objective end
-
-# TODO some models know no associations and other details; provide good fallbacks here.
-"""
-    reaction_gene_associations(a::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociation}
-
-Returns the sets of genes that need to be present so that the reaction can work
-(technically, a DNF on gene availability, with positive atoms only).
-"""
-function reaction_gene_associations end
+objective(a::AbstractFBCModel)::SparseVec = unimplemented(typeof(a), :objective)
 
 """
-    reaction_stoichiometry(m::AbstractFBCModel, rid::String)::Dict{String,Float64}
+$(TYPEDSIGNATURES)
 
-Return the stoichiometry of reaction with ID rid in the model. The dictionary
+Evaluate whether the reaction can work given in a conditions given by the
+current availability of gene products, or `nothing` if the information is not
+recorded. The availability us queried via `gene_products_available`, which must
+be a function of a single `String` argument that returns `Bool`.
+
+Generally it may be simpler to use [`reaction_gene_association_dnf`](@ref), but
+in many models the complexity of the conversion to DNF is prohibitive.
+"""
+reaction_gene_products_available(::AbstractFBCModel,reaction_id::String,gene_product_available::Function)::Maybe{Bool} = nothing
+
+"""
+$(TYPEDSIGNATURES)
+
+Returns the sets of genes that need to be present for the reaction to work in a
+DNF formula. This helps for constructively using the reaction-gene-association
+information.
+"""
+reaction_gene_association_dnf(::AbstractFBCModel,reaction_id::String)::Maybe{GeneAssociationDNF} = nothing
+
+"""
+$(TYPEDSIGNATURES)
+
+The stoichiometry of the given reaction as a dictionary
 maps the metabolite IDs to their stoichiometric coefficients.
+
+Using this function may be more efficient in cases than loading the whole
+[`stoichiometry`](@ref).
 """
-function reaction_stoichiometry end
+reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64} = unimplemented(typeof(a), :reaction_stoichiometry)
 
 """
-    reaction_annotations(a::AbstractFBCModel, reaction_id::String)::Annotations
+$(TYPEDSIGNATURES)
 
-Return standardized names that may help identifying the reaction. The
+A dictionary of standardized names that may help identifying the reaction. The
 dictionary assigns vectors of possible identifiers to identifier system names,
-e.g. "Reactome" => ["reactomeID123"].
+e.g. `"Reactome" => ["reactomeID123"]`.
 """
-function reaction_annotations end
+reaction_annotations(::AbstractFBCModel, reaction_id::String)::Annotations = Dict()
 
 """
-    reaction_notes(model::AbstractFBCModel, reaction_id::String)::Notes
+$(TYPEDSIGNATURES)
 
-Return the notes associated with reaction reaction_id in model.
+Free-text notes organized in a dictionary by topics about the given reaction in
+the model.
 """
-function reaction_notes end
-
-"""
-    reaction_name(model::AbstractFBCModel, rid::String)::Maybe{String}
-
-Return the name of reaction with ID rid.
-"""
-function reaction_name end
-
+reaction_notes(::AbstractFBCModel, reaction_id::String)::Notes = Dict()
 
 """
-    metabolite_formula(model::AbstractFBCModel, metabolite_id::String)::Maybe{MetaboliteFormula}
+$(TYPEDSIGNATURES)
 
-Return the formula of metabolite metabolite_id in model.
-Return nothing in case the formula is not known or irrelevant.
+Name of the given reaction.
 """
-function metabolite_formula end
+reaction_name(::AbstractFBCModel, reaction_id::String)::Maybe{String} = nothing
 
-"""
-    metabolite_charge(model::AbstractFBCModel, metabolite_id::String)::Maybe{Int}
-
-Return the charge associated with metabolite metabolite_id in model.
-Returns nothing if charge not present.
-"""
-function metabolite_charge end
 
 """
-    metabolite_compartment(model::AbstractFBCModel,metabolite_id::String)::Maybe{String}
+$(TYPEDSIGNATURES)
 
-Return the compartment of metabolite metabolite_id in model if it is assigned. If not,
-return nothing.
+The formula of the given metabolite in the model, or `nothing` in case the
+formula is not recorded.
 """
-function metabolite_compartment end
-
-"""
-    metabolite_annotations(a::AbstractFBCModel, metabolite_id::String,)::Annotations
-
-Return standardized names that may help to reliably identify the metabolite. The
-dictionary assigns vectors of possible identifiers to identifier system names,
-e.g. "ChEMBL" => ["123"] or "PubChem" => ["CID123", "CID654645645"].
-"""
-function metabolite_annotations end
+metabolite_formula(::AbstractFBCModel, metabolite_id::String)::Maybe{MetaboliteFormula} = nothing
 
 """
-    metabolite_notes(model::AbstractFBCModel, metabolite_id::String)::Notes
+$(TYPEDSIGNATURES)
 
-Return the notes associated with metabolite reaction_id in model.
+The charge of the given metabolite in the model, or `nothing` in case the
+charge is not recorded.
 """
-function metabolite_notes end
-
-"""
-    metabolite_name(model::AbstractFBCModel, mid::String)::Maybe{String}
-
-Return the name of metabolite with ID mid.
-"""
-function metabolite_name end
+metabolite_charge(::AbstractFBCModel, metabolite_id::String)::Maybe{Int} = nothing
 
 """
-    gene_annotations(a::AbstractFBCModel, gene_id::String)::Annotations
+$(TYPEDSIGNATURES)
 
-Return standardized names that identify the corresponding gene or product. The
-dictionary assigns vectors of possible identifiers to identifier system names,
-e.g. "PDB" => ["PROT01"].
+The compartment of the given metabolite in the model. `nothing` if no
+compartment is assigned.
 """
-function gene_annotations end
-
-"""
-    gene_notes(model::AbstractFBCModel, gene_id::String)::Notes
-
-Return the notes associated with the gene gene_id in model.
-"""
-function gene_notes end
+metabolite_compartment(::AbstractFBCModel,metabolite_id::String)::Maybe{String} = nothing
 
 """
-    gene_name(model::AbstractFBCModel, gid::String)::Maybe{String}
+$(TYPEDSIGNATURES)
 
-Return the name of gene with ID gid.
+A dictionary of standardized names that may help to identify the metabolite. The
+dictionary should assigns vectors of possible identifiers to identifier system
+names, such as `"ChEMBL" => ["123"]` or
+`"PubChem" => ["CID123", "CID654645645"]`.
 """
-function gene_name end
+metabolite_annotations(::AbstractFBCModel, metabolite_id::String,)::Annotations = Dict()
 
 """
-    convert(::Type{M}, model::AbstractFBCModel)::M where M <: AbstractFBCModel
+$(TYPEDSIGNATURES)
 
-Convert an [`AbstractFBCModel`](@ref) model to a given type.
+Free-text notes organized in a dictionary by topics about the given metabolite
+in the model.
 """
-function convert end
+metabolite_notes(::AbstractFBCModel, metabolite_id::String)::Notes = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+The name of the given metabolite, if assigned.
+"""
+metabolite_name(::AbstractFBCModel, metabolite_id::String)::Maybe{String} = nothing
+
+"""
+$(TYPEDSIGNATURES)
+
+A dictionary of standardized names that identify the corresponding gene or
+product. The dictionary assigns vectors of possible identifiers to identifier
+system names, such as `"PDB" => ["PROT01"]`.
+"""
+gene_annotations(::AbstractFBCModel, gene_id::String)::Annotations = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+Free-text notes organized in a dictionary by topics about the given gene in the
+model.
+"""
+gene_notes(::AbstractFBCModel, gene_id::String)::Notes = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+The name of the given gene in the model, if recorded.
+"""
+gene_name(::AbstractFBCModel, gene_id::String)::Maybe{String} = nothing
