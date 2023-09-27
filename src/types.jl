@@ -40,14 +40,14 @@ A shortname for a sparse vector.
 const SparseVec = SparseVector{Float64,Int}
 
 """
-    GeneAssociationsDNF = Vector{Vector{String}}
+    GeneAssociationDNF = Vector{Vector{String}}
 
 Disjunctive normal form of simple gene associations. For example, `[[A, B],
 [B]]` represents two possibilities to run a given reaction, where the first
 requires both gene products `A` and `B`, while the second possibility only
 requires gene product `C`.
 """
-const GeneAssociationsDNF = Vector{Vector{String}}
+const GeneAssociationDNF = Vector{Vector{String}}
 
 """
     Annotations = Dict{String,Vector{String}}

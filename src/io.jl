@@ -26,14 +26,18 @@ function filename_extensions(::Type{A}) where {A<:AbstractFBCModel}
     unimplemented(A, :filename_extensions)
 end
 
+import InteractiveUtils: subtypes
+
 """
 $(TYPEDSIGNATURES)
 
 Find which of the known subtypes of [`AbstractFBCModel`](@ref) would typically
 be able to open the file at `path`, using information in `filename_extensions`.
 """
-eligible_model_types_for_filename(path::String) =
-    [t for t in subtypes(A) if any(x -> endswith(".$x", path), filename_extensions(t))]
+eligible_model_types_for_filename(path::String) = [
+    t for t in subtypes(AbstractFBCModel) if
+    any(x -> endswith(path, ".$x"), filename_extensions(t))
+]
 
 """
 $(TYPEDSIGNATURES)
