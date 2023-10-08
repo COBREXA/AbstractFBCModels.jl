@@ -9,9 +9,10 @@ the common interface defined by `AbstractFBCModels.jl`.
 
 To use the interface for your type, make it a subtype of
 [`AbstractFBCModel`](@ref) and provide methods for various functions used with
-the model. Use [`accessors`](@ref) to find the current list of
-methods, and utilize [`run_fbcmodel_tests`](@ref) to test the completeness and
-compatibility of your interface with the assumptions of the interface.
+the model. Use [`accessors`](@ref) to find the current list of methods, and
+utilize [`run_fbcmodel_type_tests`](@ref) and [`run_fbcmodel_file_tests`](@ref)
+to test the completeness and compatibility of your implementation with the
+assumptions of the interface.
 """
 abstract type AbstractFBCModel end
 
@@ -53,7 +54,8 @@ const GeneAssociationDNF = Vector{Vector{String}}
     Annotations = Dict{String,Vector{String}}
 
 Dictionary used to store (possible multiple) standardized annotations of
-something, such as a [`Metabolite`](@ref) and a [`Reaction`](@ref).
+something, such as a metabolite or a reaction (as listed by
+[`metabolites`](@ref) and [`reactions`](@ref)).
 
 # Example
 ```
@@ -65,7 +67,7 @@ const Annotations = Dict{String,Vector{String}}
 """
     Notes = Dict{String,Vector{String}}
 
-Free-form notes about something (e.g. a [`Gene`](@ref)), categorized by
-"topic".
+Free-form notes about something (e.g. a gene listed by [`genes`](@ref)),
+categorized by "topic".
 """
 const Notes = Dict{String,Vector{String}}
