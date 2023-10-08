@@ -24,7 +24,7 @@ n_reactions(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_reactions)
 """
 $(TYPEDSIGNATURES)
 
-Return a vector of metabolite identifiers in a model. 
+Return a vector of metabolite identifiers in a model.
 
 As with [`reactions`](@ref), some metabolites in models may be virtual,
 representing purely technical equality constraints.
@@ -65,7 +65,7 @@ n_genes(::AbstractFBCModel)::Int = 0
 """
 $(TYPEDSIGNATURES)
 
-The sparse stoichiometric matrix of a given model. 
+The sparse stoichiometric matrix of a given model.
 
 This usually corresponds to all the equality constraints in the model. The
 matrix must be of size [`n_metabolites`](@ref) by [`n_reactions`](@ref).
