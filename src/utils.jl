@@ -69,7 +69,7 @@ The function uses the testing infrastructure from `Test` to report problems --
 it is supposed to be a part of larger test-sets, preferably in all model
 implementation packages.
 """
-function run_fbcmodel_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
+function run_fbcmodel_file_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
     @testset "Model type $X in file $path" begin
         # TODO optionally download the file as given by kwargs
 
@@ -79,7 +79,6 @@ function run_fbcmodel_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
         m2 = load(path)
         @test m2 isa X
 
-        # TODO test return types here
 
         S = stoichiometry(model)
         rxns = reactions(model)
@@ -105,5 +104,47 @@ function run_fbcmodel_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
         # contents and test their validity right here.
 
         # TODO test convert
+    end
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Test if the given model type works right.
+
+The function uses the testing infrastructure from `Test` to report problems --
+it is supposed to be a part of larger test-sets, preferably in all model
+implementation packages.
+"""
+function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
+    @testset "Model type $X properties" begin
+        rt(t, f, ts...) = @test all(x -> x <: t, unique(Base.return_types(f, ts)))
+
+        rt(Vector{String}, reactions, X)
+        rt(Int, n_reactions, X)
+        rt(Vector{String}, metabolites, X)
+        rt(Int, n_metabolites, X)
+        rt(Vector{String}, genes, X)
+        rt(Int, n_genes, X)
+        rt(SparseMat, stoichiometry, X)
+        rt(Tuple{Vector{Float64},Vector{Float64}}, bounds, X)
+        rt(SparseVec, balance, X)
+
+        rt(Maybe{Bool}, reaction_gene_products_available, X, String, Function)
+        rt(Maybe{GeneAssociationDNF}, reaction_gene_association_dnf, X, String)
+        rt(Maybe{String}, reaction_name, X, String)
+        rt(Annotations, reaction_annotations, X, String)
+        rt(Notes, reaction_notes, X, String)
+
+        rt(Maybe{MetaboliteFormula}, metabolite_formula, X, String)
+        rt(Maybe{Int}, metabolite_charge, X, String)
+        rt(Maybe{String}, metabolite_compartment, X, String)
+        rt(Maybe{String}, metabolite_name, X, String)
+        rt(Annotations, metabolite_annotations, X, String)
+        rt(Notes, metabolite_notes, X, String)
+
+        rt(Maybe{String}, gene_name, X, String)
+        rt(Annotations, gene_annotations, X, String)
+        rt(Notes, gene_notes, X, String)
     end
 end
