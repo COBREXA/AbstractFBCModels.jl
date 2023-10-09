@@ -11,7 +11,6 @@ makedocs(
     sitename = "AbstractFBCModels.jl",
     linkcheck = false,
     pages = ["README" => "index.md"; "Reference" => "reference.md"],
-    strict = [:missing_docs, :cross_references, :example_block],
 )
 
 deploydocs(
