@@ -6,6 +6,14 @@ using DocStringExtensions
 import ..AbstractFBCModels as A
 import Serialization as S
 
+"""
+$(TYPEDEF)
+
+A canonical Julia representation of a reaction in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+"""
 Base.@kwdef mutable struct Reaction
     name::A.Maybe{String} = nothing
     lower_bound::Float64 = -Inf
@@ -17,6 +25,14 @@ Base.@kwdef mutable struct Reaction
     notes::A.Notes = nothing
 end
 
+"""
+$(TYPEDEF)
+
+A canonical Julia representation of a metabolite in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+"""
 Base.@kwdef mutable struct Metabolite
     name::A.Maybe{String} = nothing
     compartment::A.Maybe{String} = nothing
@@ -27,12 +43,37 @@ Base.@kwdef mutable struct Metabolite
     notes::A.Notes = nothing
 end
 
+"""
+$(TYPEDEF)
+
+A canonical Julia representation of a gene in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+"""
 Base.@kwdef mutable struct Gene
     name::A.Maybe{String} = nothing
     annotations::A.Annotations = nothing
     notes::A.Notes = nothing
 end
 
+"""
+$(TYPEDEF)
+
+A canonical Julia representation of a metabolic model that sotres exactly the
+data represented by `AbstractFBCModels` accessors.
+
+The implementation is useful for manipulating model data manually without
+writing new model types, or even for constructing models from base data in many
+simple cases.
+
+Additionally, you can use the implementation of accessors for this model type
+in the source code of `AbstractFBCModels` as a starting point for creating an
+`AbstractFBCModel` interface for your own models.
+
+# Fields
+$(TYPEDFIELDS)
+"""
 Base.@kwdef struct Model <: A.AbstractFBCModel
     reactions::Dict{String,Reaction}
     metabolites::Dict{String,Metabolite}
@@ -78,12 +119,8 @@ A.metabolite_formula(m::Model, id::String) = m.metabolites[id].formula
 A.metabolite_charge(m::Model, id::String) = m.metabolites[id].charge
 A.metabolite_compartment(m::Model, id::String) = m.metabolites[id].compartment
 
-function A.load(::Type{Model}, path::String)::Model
-    S.deserialize(path)
-end
-
+A.load(::Type{Model}, path::String)::Model = S.deserialize(path)
 A.save(m::Model, path::String) = S.serialize(path, m)
-
 A.filename_extensions(::Type{Model}) = ["canonical-serialized-fbc"]
 
 end # module CanonicalModel

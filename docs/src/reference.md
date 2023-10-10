@@ -28,3 +28,10 @@ Pages = ["src/io.jl"]
 Modules = [AbstractFBCModels]
 Pages = ["src/utils.jl"]
 ```
+
+## Canonical model implementation
+
+```@autodocs
+Modules = [AbstractFBCModels, AbstractFBCModels.CanonicalModel]
+Pages = ["src/canonical.jl"]
+```
