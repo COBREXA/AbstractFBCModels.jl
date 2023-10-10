@@ -3,7 +3,7 @@
 
 | Build status | Documentation |
 |:---:|:---:|
-| ![CI status](https://github.com/COBREXA/AbstractFBCModels.jl/workflows/CI/badge.svg?branch=master) [![codecov](https://codecov.io/gh/COBREXA/AbstractFBCModels.jl/branch/master/graph/badge.svg?token=A2ui7exGIH)](https://codecov.io/gh/COBREXA/AbstractFBCModels.jl) | [![stable documentation](https://img.shields.io/badge/docs-stable-blue)](https://cobrexa.github.io/AbstractFBCModels.jl/stable) [![dev documentation](https://img.shields.io/badge/docs-dev-cyan)](https://cobrexa.github.io/AbstractFBCModels.jl/dev) |
+| [![CI](https://github.com/COBREXA/AbstractFBCModels.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/COBREXA/AbstractFBCModels.jl/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/COBREXA/AbstractFBCModels.jl/branch/master/graph/badge.svg?token=A2ui7exGIH)](https://codecov.io/gh/COBREXA/AbstractFBCModels.jl) | [![stable documentation](https://img.shields.io/badge/docs-stable-blue)](https://cobrexa.github.io/AbstractFBCModels.jl/stable) [![dev documentation](https://img.shields.io/badge/docs-dev-cyan)](https://cobrexa.github.io/AbstractFBCModels.jl/dev) |
 
 Package `AbstractFBCModels.jl` defines a set of accessor functions that provide
 a generic API for working with the contents of the constraint-based metabolic
