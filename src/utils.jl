@@ -63,6 +63,19 @@ end
 """
 $(TYPEDSIGNATURES)
 
+Utility function to compute the value of
+[`reaction_gene_products_available`](@ref) for models that already implement
+[`reaction_gene_association_dnf`](@ref).
+"""
+reaction_gene_products_available_from_dnf(
+    m::AbstractFBCModel,
+    reaction_id::String,
+    available::Function,
+) = any(gs -> all(available, gs), reaction_gene_association_dnf(m, reaction_id))
+
+"""
+$(TYPEDSIGNATURES)
+
 Test if the given model type loads properly from a file.
 
 The function uses the testing infrastructure from `Test` to report problems --

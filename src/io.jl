@@ -48,13 +48,9 @@ the purpose). Throws an error if the match is ambiguous or missing.
 """
 function guess_model_type_from_filename(path::String)
     ts = eligible_model_types_for_filename(path)
-    if length(ts) == 1
-        return first(ts)
-    elseif isempty(ts)
-        error("filename extension not recognized")
-    else
-        error("multiple model types match the extension: $ts")
-    end
+    isempty(ts) && error("filename extension not recognized")
+    length(ts) == 1 || error("multiple model types match the extension: $ts")
+    first(ts)
 end
 
 """
