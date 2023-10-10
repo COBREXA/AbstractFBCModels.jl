@@ -4,7 +4,7 @@ import AbstractFBCModels
 function replace_listings(str)
     makelisting(line) = begin
         filename = line[8:end]
-        open(joinpath("..", filename), "r") do f
+        open(filename, "r") do f
             "```julia\n" * join(readlines(f) .* "\n") * "```\n"
         end
     end
