@@ -5,7 +5,7 @@ using DocStringExtensions
 
 import ..AbstractFBCModels as A
 import Serialization as S
-import SparseArrays: sparse
+import SparseArrays: sparse, findnz
 
 """
 $(TYPEDEF)
@@ -22,8 +22,8 @@ Base.@kwdef mutable struct Reaction
     stoichiometry::Dict{String,Float64} = Dict()
     objective_coefficient::Float64 = 0.0
     gene_association_dnf::A.Maybe{A.GeneAssociationDNF} = nothing
-    annotations::A.Annotations = nothing
-    notes::A.Notes = nothing
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
 end
 
 """
@@ -40,8 +40,8 @@ Base.@kwdef mutable struct Metabolite
     formula::A.Maybe{A.MetaboliteFormula} = nothing
     charge::A.Maybe{Int} = nothing
     balance::Float64 = 0.0
-    annotations::A.Annotations = nothing
-    notes::A.Notes = nothing
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
 end
 
 """
@@ -54,8 +54,8 @@ $(TYPEDFIELDS)
 """
 Base.@kwdef mutable struct Gene
     name::A.Maybe{String} = nothing
-    annotations::A.Annotations = nothing
-    notes::A.Notes = nothing
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
 end
 
 """
@@ -76,14 +76,14 @@ in the source code of `AbstractFBCModels` as a starting point for creating an
 $(TYPEDFIELDS)
 """
 Base.@kwdef struct Model <: A.AbstractFBCModel
-    reactions::Dict{String,Reaction}
-    metabolites::Dict{String,Metabolite}
-    genes::Dict{String,Gene}
+    reactions::Dict{String,Reaction} = Dict()
+    metabolites::Dict{String,Metabolite} = Dict()
+    genes::Dict{String,Gene} = Dict()
 end
 
 A.reactions(m::Model) = sort(collect(keys(m.reactions)))
 A.metabolites(m::Model) = sort(collect(keys(m.metabolites)))
-A.genes(m::Model) = sort(collect(keys(m.metabolites)))
+A.genes(m::Model) = sort(collect(keys(m.genes)))
 A.n_reactions(m::Model) = length(m.reactions)
 A.n_metabolites(m::Model) = length(m.metabolites)
 A.n_genes(m::Model) = length(m.genes)
@@ -99,9 +99,12 @@ A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
 A.stoichiometry(m::Model) =
     let rids = A.reactions(m)
+        #TODO this is dense
         sparse(
-            get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
-            rid in rids
+            Float64[
+                get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
+                rid in rids
+            ],
         )
     end
 
@@ -110,9 +113,10 @@ A.bounds(m::Model) = (
     [m.reactions[rid].upper_bound for rid in A.reactions(m)],
 )
 
-A.balance(m::Model) = sparse(m.metabolite[mid].balance for mid in A.metabolites(m))
+A.balance(m::Model) =
+    sparse(Float64[m.metabolites[mid].balance for mid in A.metabolites(m)])
 A.objective(m::Model) =
-    sparse(m.reaction[rid].objective_coefficient for rid in A.reactions(m))
+    sparse(Float64[m.reactions[rid].objective_coefficient for rid in A.reactions(m)])
 
 A.reaction_gene_association_dnf(m::Model, id::String) = m.reactions[id].gene_association_dnf
 A.reaction_gene_products_available(m::Model, id::String, fn::Function) =
@@ -126,5 +130,43 @@ A.metabolite_compartment(m::Model, id::String) = m.metabolites[id].compartment
 A.load(::Type{Model}, path::String)::Model = S.deserialize(path)
 A.save(m::Model, path::String) = S.serialize(path, m)
 A.filename_extensions(::Type{Model}) = ["canonical-serialized-fbc"]
+
+function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
+    (lbs, ubs) = A.bounds(x)
+    os = A.objective(x)
+    bs = A.balance(x)
+    mets = A.metabolites(x)
+    Model(
+        reactions = Dict(
+            r => Reaction(
+                name = A.reaction_name(x, r),
+                lower_bound = lb,
+                upper_bound = ub,
+                stoichiometry = A.reaction_stoichiometry(x, r),
+                gene_association_dnf = A.reaction_gene_association_dnf(x, r),
+                annotations = A.reaction_annotations(x, r),
+                notes = A.reaction_notes(x, r),
+            ) for (r, lb, ub) in zip(A.reactions(x), lbs, ubs)
+        ),
+        metabolites = Dict(
+            m => Metabolite(
+                name = A.metabolite_name(x, m),
+                balance = b,
+                formula = A.metabolite_formula(x, m),
+                charge = A.metabolite_charge(x, m),
+                compartment = A.metabolite_compartment(x, m),
+                annotations = A.metabolite_annotations(x, m),
+                notes = A.metabolite_notes(x, m),
+            ) for (m, b) in zip(mets, bs)
+        ),
+        genes = Dict(
+            g => Gene(
+                name = A.gene_name(x, g),
+                annotations = A.gene_annotations(x, g),
+                notes = A.gene_notes(x, g),
+            ) for g in A.genes(x)
+        ),
+    )
+end
 
 end # module CanonicalModel

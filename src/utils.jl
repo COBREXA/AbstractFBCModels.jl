@@ -85,8 +85,12 @@ The function uses the testing infrastructure from `Test` to report problems --
 it is supposed to be a part of larger test-sets, preferably in all model
 implementation packages.
 """
-function run_fbcmodel_file_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
-    @testset "Model type $X in file $path" begin
+function run_fbcmodel_file_tests(
+    ::Type{X},
+    path::String;
+    name::String = path,
+) where {X<:AbstractFBCModel}
+    @testset "Model `$name' of type $X" begin
         # TODO optionally download the file as given by kwargs
 
         model = load(X, path)
@@ -101,8 +105,8 @@ function run_fbcmodel_file_tests(::Type{X}, path::String) where {X<:AbstractFBCM
         @test n_reactions(model) == length(rxns)
         mets = metabolites(model)
         @test n_metabolites(model) == length(mets)
-        gs = genes(model)
-        @test n_genes(model) == length(genes)
+        gens = genes(model)
+        @test n_genes(model) == length(gens)
 
         @test size(S) == (length(mets), length(rxns))
         @test length(balance(model)) == size(S, 1)
