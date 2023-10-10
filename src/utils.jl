@@ -67,11 +67,14 @@ Utility function to compute the value of
 [`reaction_gene_products_available`](@ref) for models that already implement
 [`reaction_gene_association_dnf`](@ref).
 """
-reaction_gene_products_available_from_dnf(
+function reaction_gene_products_available_from_dnf(
     m::AbstractFBCModel,
     reaction_id::String,
     available::Function,
-) = any(gs -> all(available, gs), reaction_gene_association_dnf(m, reaction_id))
+)::Maybe{Bool}
+    gss = reaction_gene_association_dnf(m, reaction_id)
+    isnothing(gss) ? nothing : any(gs -> all(available, gs), gss)
+end
 
 """
 $(TYPEDSIGNATURES)
@@ -131,7 +134,9 @@ implementation packages.
 """
 function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
     @testset "Model type $X properties" begin
-        rt(f, ret, args...) = @test all(t -> t <: ret, unique(Base.return_types(f, args)))
+        rt(f, ret, args...) = @testset "$f should return $ret" begin
+            @test all(t -> t <: ret, unique(Base.return_types(f, args)))
+        end
 
         rt(reactions, Vector{String}, X)
         rt(n_reactions, Int, X)
@@ -140,7 +145,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(genes, Vector{String}, X)
         rt(n_genes, Int, X)
         rt(stoichiometry, SparseMat, X)
-        rt(Tuple{Vector{Float64},Vector{Float64}}, bounds, X)
+        rt(bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
         rt(balance, SparseVec, X)
 
         rt(reaction_gene_products_available, Maybe{Bool}, X, String, Function)

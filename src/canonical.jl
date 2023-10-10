@@ -5,6 +5,7 @@ using DocStringExtensions
 
 import ..AbstractFBCModels as A
 import Serialization as S
+import SparseArrays: sparse
 
 """
 $(TYPEDEF)
@@ -96,10 +97,13 @@ A.reaction_notes(m::Model, id::String) = m.reactions[id].notes
 A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
 A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
-A.stoichiometry(m::Model) = sparse(
-    get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
-    rid in A.reactions(m)
-)
+A.stoichiometry(m::Model) =
+    let rids = A.reactions(m)
+        sparse(
+            get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
+            rid in rids
+        )
+    end
 
 A.bounds(m::Model) = (
     [m.reactions[rid].lower_bound for rid in A.reactions(m)],
