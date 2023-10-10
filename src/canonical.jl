@@ -3,37 +3,37 @@ module CanonicalModel
 
 using DocStringExtensions
 
-import ..AbstractFBCModel as A
+import ..AbstractFBCModels as A
 import Serialization as S
 
 Base.@kwdef mutable struct Reaction
-    name::Maybe{String} = nothing
+    name::A.Maybe{String} = nothing
     lower_bound::Float64 = -Inf
     upper_bound::Float64 = Inf
     stoichiometry::Dict{String,Float64} = Dict()
     objective_coefficient::Float64 = 0.0
-    gene_association_dnf::Maybe{A.GeneAssociationDNF} = nothing
+    gene_association_dnf::A.Maybe{A.GeneAssociationDNF} = nothing
     annotations::A.Annotations = nothing
     notes::A.Notes = nothing
 end
 
 Base.@kwdef mutable struct Metabolite
-    name::Maybe{String} = nothing
-    compartment::Maybe{String} = nothing
-    formula::Maybe{A.MetaboliteFormula} = nothing
-    charge::Maybe{Int} = nothing
+    name::A.Maybe{String} = nothing
+    compartment::A.Maybe{String} = nothing
+    formula::A.Maybe{A.MetaboliteFormula} = nothing
+    charge::A.Maybe{Int} = nothing
     balance::Float64 = 0.0
     annotations::A.Annotations = nothing
     notes::A.Notes = nothing
 end
 
 Base.@kwdef mutable struct Gene
-    name::Maybe{String} = nothing
+    name::A.Maybe{String} = nothing
     annotations::A.Annotations = nothing
     notes::A.Notes = nothing
 end
 
-Base.@kwdef struct Model <: AbstractFBCModel
+Base.@kwdef struct Model <: A.AbstractFBCModel
     reactions::Dict{String,Reaction}
     metabolites::Dict{String,Metabolite}
     genes::Dict{String,Gene}
