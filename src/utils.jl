@@ -63,14 +63,34 @@ end
 """
 $(TYPEDSIGNATURES)
 
+Utility function to compute the value of
+[`reaction_gene_products_available`](@ref) for models that already implement
+[`reaction_gene_association_dnf`](@ref).
+"""
+function reaction_gene_products_available_from_dnf(
+    m::AbstractFBCModel,
+    reaction_id::String,
+    available::Function,
+)::Maybe{Bool}
+    gss = reaction_gene_association_dnf(m, reaction_id)
+    isnothing(gss) ? nothing : any(gs -> all(available, gs), gss)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
 Test if the given model type loads properly from a file.
 
 The function uses the testing infrastructure from `Test` to report problems --
 it is supposed to be a part of larger test-sets, preferably in all model
 implementation packages.
 """
-function run_fbcmodel_file_tests(::Type{X}, path::String) where {X<:AbstractFBCModel}
-    @testset "Model type $X in file $path" begin
+function run_fbcmodel_file_tests(
+    ::Type{X},
+    path::String;
+    name::String = path,
+) where {X<:AbstractFBCModel}
+    @testset "Model `$name' of type $X" begin
         # TODO optionally download the file as given by kwargs
 
         model = load(X, path)
@@ -85,8 +105,8 @@ function run_fbcmodel_file_tests(::Type{X}, path::String) where {X<:AbstractFBCM
         @test n_reactions(model) == length(rxns)
         mets = metabolites(model)
         @test n_metabolites(model) == length(mets)
-        gs = genes(model)
-        @test n_genes(model) == length(genes)
+        gens = genes(model)
+        @test n_genes(model) == length(gens)
 
         @test size(S) == (length(mets), length(rxns))
         @test length(balance(model)) == size(S, 1)
@@ -118,7 +138,9 @@ implementation packages.
 """
 function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
     @testset "Model type $X properties" begin
-        rt(f, ret, args...) = @test all(t -> t <: ret, unique(Base.return_types(f, args)))
+        rt(f, ret, args...) = @testset "$f should return $ret" begin
+            @test all(t -> t <: ret, unique(Base.return_types(f, args)))
+        end
 
         rt(reactions, Vector{String}, X)
         rt(n_reactions, Int, X)
@@ -127,7 +149,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(genes, Vector{String}, X)
         rt(n_genes, Int, X)
         rt(stoichiometry, SparseMat, X)
-        rt(Tuple{Vector{Float64},Vector{Float64}}, bounds, X)
+        rt(bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
         rt(balance, SparseVec, X)
 
         rt(reaction_gene_products_available, Maybe{Bool}, X, String, Function)

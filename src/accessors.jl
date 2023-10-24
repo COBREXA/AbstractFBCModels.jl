@@ -49,7 +49,7 @@ Return identifiers of all genes contained in the model. Empty if none.
 Genes are also sometimes called "gene products" but we write genes for
 simplicity.
 """
-genes(::AbstractFBCModel)::Vector{String} = String[]
+genes(::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :genes)
 
 """
 $(TYPEDSIGNATURES)
@@ -60,7 +60,7 @@ by [`genes`](@ref)).
 This may be more efficient than calling [`genes`](@ref) and measuring the
 array.
 """
-n_genes(::AbstractFBCModel)::Int = 0
+n_genes(::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_genes)
 
 """
 $(TYPEDSIGNATURES)
