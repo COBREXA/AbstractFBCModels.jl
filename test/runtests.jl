@@ -7,4 +7,7 @@ import AbstractFBCModels as A
     @testset "Canonical model documentation" begin
         include("../docs/src/canonical.jl")
     end
+    @testset "Utilities" begin
+        include("../docs/src/canonical.jl")
+    end
 end
