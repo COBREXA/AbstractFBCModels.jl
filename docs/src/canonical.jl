@@ -64,21 +64,34 @@ A.run_fbcmodel_type_tests(Model);
 # For testing the values, you need to provide an existing file that contains
 # the model. Let's create some contents first:
 
-import AbstractFBCModels.CanonicalModel: Reaction, Metabolite
+import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene
 
 m = Model()
-m.reactions["forward"] =
-    Reaction(name = "import", stoichiometry = Dict("m1" => -1.0, "m2" => 1.0))
-m.reactions["and_back"] =
-    Reaction(name = "export", stoichiometry = Dict("m2" => -1.0, "m1" => 1.0))
 m.metabolites["m1"] = Metabolite(compartment = "inside")
 m.metabolites["m2"] = Metabolite(compartment = "outside")
+m.genes["g1"] = Gene()
+m.genes["g2"] = Gene()
+m.reactions["forward"] = Reaction(
+    name = "import",
+    stoichiometry = Dict("m1" => -1.0, "m2" => 1.0),
+    gene_association_dnf = [["g1"], ["g2"]],
+)
+m.reactions["and_back"] =
+    Reaction(name = "export", stoichiometry = Dict("m2" => -1.0, "m1" => 1.0))
 nothing #hide
 
 # We should immediately find the basic accessors working:
 A.stoichiometry(m)
 
-# We can now write the model to disk and try to load it with the default
+# We can check various side things, such as which reactions would and would not work given all gene products disappear:
+products_available = [
+    A.reaction_gene_products_available(m, rid, _ -> false) for
+    rid in ["forward", "and_back"]
+]
+
+@test products_available == [false, nothing] #src
+
+# We can now also write the model to disk and try to load it with the default
 # loading function:
 mktempdir() do dir
     path = joinpath(dir, "model.canonical-serialized-fbc")
