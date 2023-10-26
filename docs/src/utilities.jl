@@ -69,16 +69,16 @@ mktempdir() do dir
     open(origin, "w") do f
         write(f, "hello")
     end
-    A.download_data_file( #src
-        url, #src
-        dest, #src
-        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src
-    ) #src
+    A.download_data_file(
+        url,
+        dest,
+        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+    )
     x = A.download_data_file( #src
         url, #src
         dest, #src
         "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src
-    ) # src
+    ) #src
     @test x == dest #src
     @test read(origin) == read(dest) #src
     open(dest, "w") do f #src
