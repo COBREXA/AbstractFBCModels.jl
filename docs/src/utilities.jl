@@ -12,7 +12,7 @@ import AbstractFBCModels as A
 
 A.accessors()
 
-@test length(A.accessors) == 27 #src
+@test length(A.accessors()) == 27 #src
 
 # You do not need to overload all of them (e.g., if you model does not have any
 # genes you can completely omit all gene-related functions). The main required
@@ -57,6 +57,36 @@ A.accessors()
 #
 # ## Downloading models for testing
 #
-# For reproducibility,
+# For reproducibility, it is often viable to check downloaded files for
+# validity, using e.g. checksums. Since this is a common operation, we provide
+# `download_data_file`, which is an appropriate wrapper for
+# `Downloads.download`:
 
-#TODO download file:///something
+mktempdir() do dir
+    origin = joinpath(dir, "origin")
+    url = "file://$origin"
+    dest = joinpath(dir, "model")
+    open(origin, "w") do f
+        write(f, "hello")
+    end
+    A.download_data_file( #src
+        url, #src
+        dest, #src
+        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src
+    ) #src
+    x = A.download_data_file( #src
+        url, #src
+        dest, #src
+        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src
+    ) # src
+    @test x == dest #src
+    @test read(origin) == read(dest) #src
+    open(dest, "w") do f #src
+        write(f, "olleh") #src
+    end #src
+    @test_warn "different" A.download_data_file( #src
+        url, #src
+        dest, #src
+        "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src
+    ) #src
+end

@@ -8,6 +8,8 @@ import AbstractFBCModels as A
         include("../docs/src/canonical.jl")
     end
     @testset "Utilities" begin
-        include("../docs/src/canonical.jl")
+        include("../docs/src/utilities.jl")
     end
+
+    include("defaults.jl")
 end

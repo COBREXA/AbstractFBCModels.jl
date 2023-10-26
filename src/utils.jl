@@ -55,7 +55,7 @@ function download_data_file(url, path, hash)
         return path
     end
 
-    Downloads.download(url, path)
+    path = download(url, path)
     check_cached_file_hash(path, hash)
     return path
 end
