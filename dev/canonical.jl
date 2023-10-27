@@ -78,6 +78,16 @@ m.reactions["forward"] = Reaction(
 )
 m.reactions["and_back"] =
     Reaction(name = "export", stoichiometry = Dict("m2" => -1.0, "m1" => 1.0))
+m.reactions["exchange1"] = Reaction(
+    name = "exchange m1",
+    stoichiometry = Dict("m1" => -1.0),
+    gene_association_dnf = [[]], # DNF encoding of a reaction that requires no gene products
+)
+m.reactions["exchange2"] = Reaction(
+    name = "exchange m2",
+    stoichiometry = Dict("m2" => -1.0),
+    gene_association_dnf = [], # DNF encoding of a reaction that never has gene products available
+)
 nothing #hide
 
 # We should immediately find the basic accessors working:
@@ -86,10 +96,10 @@ A.stoichiometry(m)
 # We can check various side things, such as which reactions would and would not work given all gene products disappear:
 products_available = [
     A.reaction_gene_products_available(m, rid, _ -> false) for
-    rid in ["forward", "and_back"]
+    rid in ["forward", "and_back", "exchange1", "exchange2"]
 ]
 
-@test products_available == [false, nothing] #src
+@test products_available == [false, nothing, true, false] #src
 
 # We can now also write the model to disk and try to load it with the default
 # loading function:
