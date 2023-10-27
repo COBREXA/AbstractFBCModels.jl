@@ -89,9 +89,9 @@ function run_fbcmodel_file_tests(
     ::Type{X},
     path::String;
     name::String = path,
+    test_save::Bool = true,
 ) where {X<:AbstractFBCModel}
     @testset "Model `$name' of type $X" begin
-        # TODO optionally download the file as given by kwargs
 
         model = load(X, path)
         @test model isa X
@@ -99,7 +99,7 @@ function run_fbcmodel_file_tests(
         m2 = load(path)
         @test m2 isa X
 
-
+        # test basic properties
         S = stoichiometry(model)
         rxns = reactions(model)
         @test n_reactions(model) == length(rxns)
@@ -108,6 +108,7 @@ function run_fbcmodel_file_tests(
         gens = genes(model)
         @test n_genes(model) == length(gens)
 
+        # test sizing
         @test size(S) == (length(mets), length(rxns))
         @test length(balance(model)) == size(S, 1)
         bs = bounds(model)
@@ -118,12 +119,61 @@ function run_fbcmodel_file_tests(
         obj = objective(model)
         @test length(obj) == size(S, 2)
 
-        # TODO test that other things work
+        let ms = Set(mets), mi = Dict(mets .=> 1:length(mets))
+            for (ridx, rid) in enumerate(reactions(model))
+                for (met, stoi) in reaction_stoichiometry(model, rid)
+                    # test if reaction stoichiometries refer to metabolites and the result is the same as with the matrix
+                    @test met in ms
+                    @test S[mi[met], ridx] == stoi
+                end
+            end
+        end
 
-        # TODO allow (force) folks to add arguments that describe model
-        # contents and test their validity right here.
+        let gs = Set(gens)
+            for rid in rxns
+                # check if all genes reported in DNFs are registered in genes
+                ga = reaction_gene_association_dnf(model, rid)
+                isnothing(ga) && continue
+                gas = vcat(ga...)
+                @test all(g -> g in gs, gas)
+                if isempty(ga)
+                    @test !reaction_gene_products_available(
+                        model,
+                        rid,
+                        g -> error("should not query"),
+                    )
+                elseif [] in ga
+                    @test reaction_gene_products_available(model, rid, g -> false)
+                else
+                    # check if the DNF descriptions match what the boolean evaluators think
+                    sgas = Set(gas)
+                    @test reaction_gene_products_available(model, rid, g -> g in sgas)
+                    @test !reaction_gene_products_available(model, rid, g -> !(g in sgas))
+                end
+            end
+        end
 
-        # TODO test convert
+        # test saving
+        m3 = test_save ? mktempdir() do d
+            p = joinpath(d, "test-model")
+            save(model, p)
+            load(X, p)
+        end : m2
+
+        # test conversion through the canonical model (should preserve everything)
+        m4 = convert(X, convert(CanonicalModel.Model, model))
+
+        # all the variants loaded from other sources should be equivalent
+        for m in [m2, m3, m4]
+            @test issetequal(rxns, reactions(m))
+            @test issetequal(mets, metabolites(m))
+            @test issetequal(gens, genes(m))
+
+            # TODO eventually add stricter equality tests
+        end
+
+        # TODO allow users to add arguments that describe model contents (like
+        # expect_n_reactions=123) and test their validity right here.
     end
 end
 
@@ -150,6 +200,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(n_genes, Int, X)
         rt(stoichiometry, SparseMat, X)
         rt(bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
+        rt(objective, SparseVec, X)
         rt(balance, SparseVec, X)
 
         rt(reaction_gene_products_available, Maybe{Bool}, X, String, Function)
