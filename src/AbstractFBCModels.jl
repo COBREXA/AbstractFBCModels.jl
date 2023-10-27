@@ -3,7 +3,7 @@ Package `AbstractFBCModels.jl` defines a very general interface that allows
 access to data stored in flux-balanced constrained (FBC) models, which is a
 common way to represent metabolic models of organisms of various scales.
 
-The interface enables 2 main goals:
+The interface enables 3 main goals:
 - You can load and save data from/to various types of FBC models, including the
   MatLab-based format (as used e.g. by
   [CobraToolbox](https://github.com/opencobra/cobratoolbox)), JSON-based format
@@ -11,6 +11,9 @@ The interface enables 2 main goals:
   [SBML](https://github.com/sbmlteam/libsbml), and others.
 - You can freely convert the model data among the formats using standard Julia
   `convert()`.
+- If you created a new model exchange format, you can make it usable in all
+  packages that already work with `AbstractFBCModel` interface just by
+  implementing the API methods.
 
 The package provides an additional "canonical model" format (in submodule
 `CanonicalModel`) that implements the bare minimum of features required to

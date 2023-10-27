@@ -11,10 +11,11 @@ a generic API for working with the contents of the constraint-based metabolic
 formats may implement the API to transparently expose the contents of the
 models in given format to many other packages.
 
-The primary purpose of this is to provide the model loading functionality for
+The primary purpose of this is to provide the model data interface for
 [COBREXA.jl](https://github.com/LCSB-BioCore/COBREXA.jl) and
-[FBCModelTests.jl](https://github.com/LCSB-BioCore/FBCModelTests.jl), but is
-otherwise completely generic and can be used independently of these packages.
+[FBCModelTests.jl](https://github.com/LCSB-BioCore/FBCModelTests.jl), but the
+functionality is otherwise completely generic and can be used independently of
+these packages.
 
 The package is currently quite new, maintained and open for extensions; feel
 free to discuss changes and ideas via issues and pull requests.
