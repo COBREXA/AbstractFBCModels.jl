@@ -1,5 +1,5 @@
 
-# # Custom models
+# # Implementing new model types
 #
 # For convenience, `AbstractFBCModels` defines a "canonical" implementation of
 # a FBC model: a completely generic data structure that can store exactly the
