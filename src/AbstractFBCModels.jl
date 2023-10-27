@@ -17,6 +17,10 @@ The package provides an additional "canonical model" format (in submodule
 store all data representable via the general interface. You can use it as a
 base for implementing more complex model formats, or as a safe middle-point for
 model data conversion. See the examples in the documentation for details.
+
+This package is lightweight and implements no other specific functionality. To
+load data from actual model formats, you will also need other packages that
+implement the functionality, such as `SBMLFBCModels.jl`.
 """
 module AbstractFBCModels
 
