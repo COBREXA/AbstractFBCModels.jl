@@ -200,6 +200,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(n_genes, Int, X)
         rt(stoichiometry, SparseMat, X)
         rt(bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
+        rt(objective, SparseVec, X)
         rt(balance, SparseVec, X)
 
         rt(reaction_gene_products_available, Maybe{Bool}, X, String, Function)
