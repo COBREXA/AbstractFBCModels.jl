@@ -84,7 +84,7 @@ mktempdir() do dir
     open(dest, "w") do f #src
         write(f, "olleh") #src
     end #src
-    @test_warn "different" A.download_data_file( #src
+    @test_logs (:warn, r".*") match_mode = :any A.download_data_file( #src
         url, #src
         dest, #src
         "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", #src

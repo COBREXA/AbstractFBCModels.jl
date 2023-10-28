@@ -22,7 +22,15 @@ function accessors()
     for nm in names(AbstractFBCModels; all = true)
         f = getfield(AbstractFBCModels, nm)
         if isa(f, Base.Callable)
-            methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
+            try
+                methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
+            catch
+                # Earlier versions of Julia tend to throw MethodErrors here
+                # whenever the method actually doesn't exist (e.g. 1.6.x
+                # reports that it's actually a missing `methodswith` method
+                # rather than the one of `f`. If that happens, we can simply do
+                # nothing.
+            end
         end
     end
     ms
@@ -36,7 +44,7 @@ Check if the file at `path` has the expected hash.
 function check_cached_file_hash(path, expected_checksum)
     actual_checksum = bytes2hex(sha256(open(path)))
     if actual_checksum != expected_checksum
-        @error "The downloaded data file `$path' seems to be different from the expected one. Tests will likely fail." actual_checksum expected_checksum
+        @warn "The downloaded data file `$path' seems to be different from the expected one. Tests will likely fail." actual_checksum expected_checksum
         @info "You can likely remove `$path' to force re-downloading."
     end
 end
