@@ -144,6 +144,9 @@ function run_fbcmodel_file_tests(
                 isnothing(ga) && continue
                 gas = vcat(ga...)
                 @test all(g -> g in gs, gas)
+                # if we have a DNF for some reaction, this must be able to interpret it
+                @test !isnothing(reaction_gene_products_available(model, rid, _ -> true))
+                # ...and the interpretation must be the same.
                 if isempty(ga)
                     @test !reaction_gene_products_available(
                         model,

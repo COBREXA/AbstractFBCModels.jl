@@ -105,6 +105,12 @@ be a function of a single `String` argument that returns `Bool`.
 
 Generally it may be simpler to use [`reaction_gene_association_dnf`](@ref), but
 in many models the complexity of the conversion to DNF is prohibitive.
+
+For generality reasons, this **must** be properly overloaded for all models
+that overload [`reaction_gene_association_dnf`](@ref). Implementations may
+define [`reaction_gene_products_available_from_dnf`](@ref) to derive a valid
+implementation from an existing overload of
+[`reaction_gene_association_dnf`](@ref).
 """
 reaction_gene_products_available(
     ::AbstractFBCModel,
@@ -118,6 +124,11 @@ $(TYPEDSIGNATURES)
 Returns the sets of genes that need to be present for the reaction to work in a
 DNF formula. This helps for constructively using the reaction-gene-association
 information.
+
+If a model overloads this function, it **must** also properly overload
+[`reaction_gene_products_available`](@ref). You can use
+[`reaction_gene_products_available_from_dnf`](@ref) as a helper for computing
+the availability from an existing overload of [`reaction_gene_association_dnf`](@ref).
 """
 reaction_gene_association_dnf(
     ::AbstractFBCModel,
