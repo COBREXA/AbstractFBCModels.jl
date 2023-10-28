@@ -137,6 +137,8 @@ function run_fbcmodel_file_tests(
             end
         end
 
+        rgpa_not_implemented = all(isnothing(reaction_gene_products_available(model, rid, g -> false)) for rid in reactions(model))
+         
         let gs = Set(gens)
             for rid in rxns
                 # check if all genes reported in DNFs are registered in genes
@@ -144,6 +146,8 @@ function run_fbcmodel_file_tests(
                 isnothing(ga) && continue
                 gas = vcat(ga...)
                 @test all(g -> g in gs, gas)
+
+                rgpa_not_implemented && continue
                 if isempty(ga)
                     @test !reaction_gene_products_available(
                         model,
