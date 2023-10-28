@@ -216,6 +216,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(reaction_name, Maybe{String}, X, String)
         rt(reaction_annotations, Annotations, X, String)
         rt(reaction_notes, Notes, X, String)
+        rt(reaction_stoichiometry, :Dict{String,Float64}, X, String)
 
         rt(metabolite_formula, Maybe{MetaboliteFormula}, X, String)
         rt(metabolite_charge, Maybe{Int}, X, String)
