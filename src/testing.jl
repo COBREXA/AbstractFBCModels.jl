@@ -150,6 +150,7 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(objective, SparseVec, X)
         rt(balance, SparseVec, X)
 
+        rt(reaction_stoichiometry, Dict{String,Float64}, X, String)
         rt(reaction_gene_products_available, Maybe{Bool}, X, String, Function)
         rt(reaction_gene_association_dnf, Maybe{GeneAssociationDNF}, X, String)
         rt(reaction_name, Maybe{String}, X, String)
