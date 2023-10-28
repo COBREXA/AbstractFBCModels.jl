@@ -22,6 +22,13 @@ Modules = [AbstractFBCModels]
 Pages = ["src/io.jl"]
 ```
 
+## Testing of model implementations
+
+```@autodocs
+Modules = [AbstractFBCModels]
+Pages = ["src/testing.jl"]
+```
+
 ## Miscellaneous utilities
 
 ```@autodocs
