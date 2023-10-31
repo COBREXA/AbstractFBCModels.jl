@@ -12,4 +12,6 @@ import AbstractFBCModels as A
     end
 
     include("defaults.jl")
+
+    include("pretty_printing.jl")
 end

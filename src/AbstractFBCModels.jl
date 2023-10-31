@@ -35,5 +35,7 @@ include("io.jl")
 include("utils.jl")
 include("testing.jl")
 include("canonical.jl")
+include("pretty_printing.jl")
+include("io_canonical.jl")
 
 end # module AbstractFBCModel
