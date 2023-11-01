@@ -51,4 +51,19 @@ function _pretty_print_keyvals(io, def::String, payload::Dict)
     end
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Print out long reaction stoichiometries nicely.
+"""
+function _pretty_substances(ss::Vector{String})::String
+    if isempty(ss)
+        "∅"
+    elseif length(ss) > 5
+        join([ss[1], ss[2], "...", ss[end-1], ss[end]], " + ")
+    else
+        join(ss, " + ")
+    end
+end
+
 end

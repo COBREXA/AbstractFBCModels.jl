@@ -42,3 +42,10 @@ Pages = ["src/utils.jl"]
 Modules = [AbstractFBCModels, AbstractFBCModels.CanonicalModel]
 Pages = ["src/canonical.jl"]
 ```
+
+## Pretty printing utilities
+
+```@autodocs
+Modules = [AbstractFBCModels, AbstractFBCModels.InternalPrinting]
+Pages = ["src/pretty_printing.jl"]
+```

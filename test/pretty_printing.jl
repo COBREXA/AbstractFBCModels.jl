@@ -23,40 +23,27 @@
         ),
     )
 
-    r1.stoichiometry = Dict("m1" => -1.0, "m2" => -1.0, "m3" => -1.0, "m4" => -1.0, "m5" => -1.0, "m6" => -1.0,)
-    @test all(
-        contains.(
-            sprint(show, MIME("text/plain"), r1),
-            ["-100.0", "∅", "..."],
-        ),
+    r1.stoichiometry = Dict(
+        "m1" => -1.0,
+        "m2" => -1.0,
+        "m3" => -1.0,
+        "m4" => -1.0,
+        "m5" => -1.0,
+        "m6" => -1.0,
     )
+    @test all(contains.(sprint(show, MIME("text/plain"), r1), ["-100.0", "∅", "..."]))
 
     r1.lower_bound = -100.0
     r1.upper_bound = 0.0
-    @test all(
-        contains.(
-            sprint(show, MIME("text/plain"), r1),
-            ["←"],
-        ),
-    )
+    @test all(contains.(sprint(show, MIME("text/plain"), r1), ["←"]))
 
     r1.lower_bound = 0.0
     r1.upper_bound = 100.0
-    @test all(
-        contains.(
-            sprint(show, MIME("text/plain"), r1),
-            ["→"],
-        ),
-    )
+    @test all(contains.(sprint(show, MIME("text/plain"), r1), ["→"]))
 
     r1.lower_bound = 0.0
     r1.upper_bound = 0.0
-    @test all(
-        contains.(
-            sprint(show, MIME("text/plain"), r1),
-            ["→|←"],
-        ),
-    )
+    @test all(contains.(sprint(show, MIME("text/plain"), r1), ["→|←"]))
 
     # create and test IO for dummy metabolite
     m1 = A.CanonicalModel.Metabolite()

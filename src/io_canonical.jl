@@ -15,21 +15,17 @@ function Base.show(io::IO, ::MIME"text/plain", m::C.Metabolite)
             c = isnothing(getfield(m, fname)) ? nothing : string(getfield(m, fname))
             IP._pretty_print_keyvals(io, "Metabolite.$(string(fname)): ", c)
         elseif fname == :formula
-            c = isnothing(getfield(m, fname)) ? nothing : join([k*string(v) for (k, v) in getfield(m, fname)])
-            IP._pretty_print_keyvals(io, "Metabolite.$(string(fname)): ", c)    
+            c =
+                isnothing(getfield(m, fname)) ? nothing :
+                join([k * string(v) for (k, v) in getfield(m, fname)])
+            IP._pretty_print_keyvals(io, "Metabolite.$(string(fname)): ", c)
         else
-            IP._pretty_print_keyvals(io, "Metabolite.$(string(fname)): ", getfield(m, fname))
+            IP._pretty_print_keyvals(
+                io,
+                "Metabolite.$(string(fname)): ",
+                getfield(m, fname),
+            )
         end
-    end
-end
-
-function _pretty_substances(ss::Vector{String})::String
-    if isempty(ss)
-        "∅"
-    elseif length(ss) > 5
-        join([ss[1], ss[2], "...", ss[end-1], ss[end]], " + ")
-    else
-        join(ss, " + ")
     end
 end
 
@@ -43,8 +39,9 @@ function Base.show(io::IO, ::MIME"text/plain", r::C.Reaction)
     else
         arrow = " →|←  " # blocked reaction
     end
-    substrates =
-        ["$(-v) $k" for (k, v) in Iterators.filter(((_, v)::Pair -> v < 0), r.stoichiometry)]
+    substrates = [
+        "$(-v) $k" for (k, v) in Iterators.filter(((_, v)::Pair -> v < 0), r.stoichiometry)
+    ]
     products =
         ["$v $k" for (k, v) in Iterators.filter(((_, v)::Pair -> v >= 0), r.stoichiometry)]
 
@@ -53,15 +50,13 @@ function Base.show(io::IO, ::MIME"text/plain", r::C.Reaction)
             IP._pretty_print_keyvals(
                 io,
                 "Reaction.$(string(fname)): ",
-                _pretty_substances(substrates) * arrow * _pretty_substances(products),
+                IP._pretty_substances(substrates) * arrow * IP._pretty_substances(products),
             )
         elseif fname == :gene_association_dnf
-            c = isnothing(getfield(r, fname)) ? nothing : join("(".*[join(x, " and ") for x in getfield(r, fname)].*")", " or ")
-            IP._pretty_print_keyvals(
-                io,
-                "Reaction.$(string(fname)): ",
-                c,
-            )
+            c =
+                isnothing(getfield(r, fname)) ? nothing :
+                join("(" .* [join(x, " and ") for x in getfield(r, fname)] .* ")", " or ")
+            IP._pretty_print_keyvals(io, "Reaction.$(string(fname)): ", c)
         elseif fname in (:lb, :ub, :objective_coefficient)
             IP._pretty_print_keyvals(
                 io,
