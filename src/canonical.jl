@@ -106,12 +106,12 @@ A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
 A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
 function A.stoichiometry(m::Model)
-    midxs = Dict(mid => idx for (idx,(mid,_)) = enumerate(m.metabolites))
+    midxs = Dict(mid => idx for (idx, (mid, _)) in enumerate(m.metabolites))
     I = Int[]
     J = Int[]
     V = Float64[]
-    for (ridx, (_, r)) = enumerate(m.reactions)
-        for (smid, v) = r.stoichiometry
+    for (ridx, (_, r)) in enumerate(m.reactions)
+        for (smid, v) in r.stoichiometry
             push!(I, midxs[smid])
             push!(J, ridx)
             push!(V, v)

@@ -70,7 +70,7 @@ $(TYPEDSIGNATURES)
 Helper for nicely showing the contents of possibly complicated model
 structures.
 """
-function pretty_print_kwdef(io::Base.IO, x::T) where T
+function pretty_print_kwdef(io::Base.IO, x::T) where {T}
     println(io, "$T(")
     (_, cols) = displaysize(io)
     for fn in fieldnames(T)
