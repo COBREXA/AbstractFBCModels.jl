@@ -75,13 +75,9 @@ function pretty_print_kwdef(io::Base.IO, x::T) where T
     (_, cols) = displaysize(io)
     for fn in fieldnames(T)
         shw = repr(getfield(x, fn))
-        if get(io, :limit, true)::Bool
-            tgt_cols = max(16, cols - (2 + length(String(fn)) + 3 + 1))
-            if length(shw) >= tgt_cols
-                shw = join(collect(shw)[begin:tgt_cols]) * "…"
-            else
-                shw *= ","
-            end
+        tgt_cols = max(16, cols - (2 + length(String(fn)) + 3 + 1))
+        if get(io, :limit, true)::Bool && length(shw) >= tgt_cols
+            shw = join(collect(shw)[begin:tgt_cols]) * "…"
         else
             shw *= ","
         end
