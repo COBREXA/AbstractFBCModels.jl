@@ -90,6 +90,15 @@ m.reactions["exchange2"] = Reaction(
 )
 nothing #hide
 
+show_contains(x, y) = contains(sprint(show, MIME"text/plain"(), x), y) #src
+@test show_contains(m, "reactions = ") #src
+@test show_contains(m, "metabolites = ") #src
+@test show_contains(m, "genes = ") #src
+@test show_contains(m.reactions["and_back"], "\"export\"") #src
+@test show_contains(m.reactions["forward"], "\"g1\"") #src
+@test show_contains(m.metabolites["m1"], "\"inside\"") #src
+@test show_contains(m.genes["g1"], "name = nothing") #src
+
 # We should immediately find the basic accessors working:
 A.stoichiometry(m)
 
