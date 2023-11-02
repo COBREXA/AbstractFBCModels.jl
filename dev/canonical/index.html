@@ -27,6 +27,8 @@ Base.@kwdef mutable struct Reaction
     notes::A.Notes = A.Notes()
 end
 
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Reaction) = A.pretty_print_kwdef(io, x)
+
 &quot;&quot;&quot;
 $(TYPEDEF)
 
@@ -45,6 +47,8 @@ Base.@kwdef mutable struct Metabolite
     notes::A.Notes = A.Notes()
 end
 
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Metabolite) = A.pretty_print_kwdef(io, x)
+
 &quot;&quot;&quot;
 $(TYPEDEF)
 
@@ -58,6 +62,8 @@ Base.@kwdef mutable struct Gene
     annotations::A.Annotations = A.Annotations()
     notes::A.Notes = A.Notes()
 end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Gene) = A.pretty_print_kwdef(io, x)
 
 &quot;&quot;&quot;
 $(TYPEDEF)
@@ -82,6 +88,8 @@ Base.@kwdef struct Model &lt;: A.AbstractFBCModel
     genes::Dict{String,Gene} = Dict()
 end
 
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Model) = A.pretty_print_kwdef(io, x)
+
 A.reactions(m::Model) = sort(collect(keys(m.reactions)))
 A.metabolites(m::Model) = sort(collect(keys(m.metabolites)))
 A.genes(m::Model) = sort(collect(keys(m.genes)))
@@ -98,16 +106,20 @@ A.reaction_notes(m::Model, id::String) = m.reactions[id].notes
 A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
 A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
-A.stoichiometry(m::Model) =
-    let rids = A.reactions(m)
-        #TODO this is dense
-        sparse(
-            Float64[
-                get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
-                rid in rids
-            ],
-        )
+function A.stoichiometry(m::Model)
+    midxs = Dict(mid =&gt; idx for (idx, (mid, _)) in enumerate(m.metabolites))
+    I = Int[]
+    J = Int[]
+    V = Float64[]
+    for (ridx, (_, r)) in enumerate(m.reactions)
+        for (smid, v) in r.stoichiometry
+            push!(I, midxs[smid])
+            push!(J, ridx)
+            push!(V, v)
+        end
     end
+    sparse(I, J, V, length(m.metabolites), length(m.reactions))
+end
 
 A.bounds(m::Model) = (
     [m.reactions[rid].lower_bound for rid in A.reactions(m)],
@@ -210,9 +222,14 @@ m.reactions[&quot;exchange2&quot;] = Reaction(
     path = joinpath(dir, &quot;model.canonical-serialized-fbc&quot;)
     A.save(m, path)
     A.load(path)
-end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">AbstractFBCModels.CanonicalModel.Model(#= 4 reactions, 2 metabolites =#)</code></pre><h3 id="Running-the-value-tests"><a class="docs-heading-anchor" href="#Running-the-value-tests">Running the value tests</a><a id="Running-the-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Running-the-value-tests" title="Permalink"></a></h3><p>Given the data, value tests have an opportunity to scrutinize much greater amount of properties of the model implementation.</p><p>Running the tests requires a model type and an &quot;example&quot; model file:</p><pre><code class="language-julia hljs">mktempdir() do dir
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">AbstractFBCModels.CanonicalModel.Model(
+  reactions = Dict{String, AbstractFBCModels.CanonicalModel.Reaction}(&quot;forward&quot;…
+  metabolites = Dict{String, AbstractFBCModels.CanonicalModel.Metabolite}(&quot;m2&quot; …
+  genes = Dict{String, AbstractFBCModels.CanonicalModel.Gene}(&quot;g2&quot; =&gt; AbstractF…
+)
+</code></pre><h3 id="Running-the-value-tests"><a class="docs-heading-anchor" href="#Running-the-value-tests">Running the value tests</a><a id="Running-the-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Running-the-value-tests" title="Permalink"></a></h3><p>Given the data, value tests have an opportunity to scrutinize much greater amount of properties of the model implementation.</p><p>Running the tests requires a model type and an &quot;example&quot; model file:</p><pre><code class="language-julia hljs">mktempdir() do dir
     path = joinpath(dir, &quot;model.canonical-serialized-fbc&quot;)
     A.save(m, path)
     A.run_fbcmodel_file_tests(Model, path, name = &quot;small model&quot;)
 end;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Test Summary:                                                      | <span class="sgr32">Pass  </span><span class="sgr36">Total  </span>Time</span>
-Model `small model&#39; of type AbstractFBCModels.CanonicalModel.Model | <span class="sgr32">  42  </span><span class="sgr36">   42  </span>0.1s</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« README</a><a class="docs-footer-nextpage" href="../utilities/">Utility functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Saturday 28 October 2023 14:10">Saturday 28 October 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Model `small model&#39; of type AbstractFBCModels.CanonicalModel.Model | <span class="sgr32">  42  </span><span class="sgr36">   42  </span>0.1s</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« README</a><a class="docs-footer-nextpage" href="../utilities/">Utility functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Thursday 2 November 2023 14:01">Thursday 2 November 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
