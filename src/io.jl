@@ -64,6 +64,32 @@ time.
 """
 load(path::String) = load(guess_model_type_from_filename(path), path)
 
+"""
+$(TYPEDSIGNATURES)
+
+Helper for nicely showing the contents of possibly complicated model
+structures.
+"""
+function pretty_print_kwdef(io::Base.IO, x::T) where T
+    println(io, "$T(")
+    (_, cols) = displaysize(io)
+    for fn in fieldnames(T)
+        shw = repr(getfield(x, fn))
+        if get(io, :limit, true)::Bool
+            tgt_cols = max(16, cols - (2 + length(String(fn)) + 3 + 1))
+            if length(shw) >= tgt_cols
+                shw = join(collect(shw)[begin:tgt_cols]) * "…"
+            else
+                shw *= ","
+            end
+        else
+            shw *= ","
+        end
+        println(io, "  $fn = $shw")
+    end
+    println(io, ")")
+end
+
 Base.show(io::Base.IO, ::MIME"text/plain", m::AbstractFBCModel) = print(
     io,
     "$(typeof(m))(#= $(n_reactions(m)) reactions, $(n_metabolites(m)) metabolites =#)",

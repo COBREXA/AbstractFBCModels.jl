@@ -26,6 +26,8 @@ Base.@kwdef mutable struct Reaction
     notes::A.Notes = A.Notes()
 end
 
+Base.show(io::Base.IO, ::MIME"text/plain", x::Reaction) = A.pretty_print_kwdef(io, x)
+
 """
 $(TYPEDEF)
 
@@ -44,6 +46,8 @@ Base.@kwdef mutable struct Metabolite
     notes::A.Notes = A.Notes()
 end
 
+Base.show(io::Base.IO, ::MIME"text/plain", x::Metabolite) = A.pretty_print_kwdef(io, x)
+
 """
 $(TYPEDEF)
 
@@ -57,6 +61,8 @@ Base.@kwdef mutable struct Gene
     annotations::A.Annotations = A.Annotations()
     notes::A.Notes = A.Notes()
 end
+
+Base.show(io::Base.IO, ::MIME"text/plain", x::Gene) = A.pretty_print_kwdef(io, x)
 
 """
 $(TYPEDEF)
@@ -80,6 +86,8 @@ Base.@kwdef struct Model <: A.AbstractFBCModel
     metabolites::Dict{String,Metabolite} = Dict()
     genes::Dict{String,Gene} = Dict()
 end
+
+Base.show(io::Base.IO, ::MIME"text/plain", x::Model) = A.pretty_print_kwdef(io, x)
 
 A.reactions(m::Model) = sort(collect(keys(m.reactions)))
 A.metabolites(m::Model) = sort(collect(keys(m.metabolites)))
