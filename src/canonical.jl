@@ -105,7 +105,7 @@ A.reaction_notes(m::Model, id::String) = m.reactions[id].notes
 A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
 A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
-function A.stoichiometry(m::Model)::SparseMat
+function A.stoichiometry(m::Model)
     midxs = Dict(mid => idx for (idx,(mid,_)) = enumerate(m.metabolites))
     I = Int[]
     J = Int[]
