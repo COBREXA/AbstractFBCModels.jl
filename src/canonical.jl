@@ -105,16 +105,20 @@ A.reaction_notes(m::Model, id::String) = m.reactions[id].notes
 A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
 A.gene_notes(m::Model, id::String) = m.genes[id].notes
 
-A.stoichiometry(m::Model) =
-    let rids = A.reactions(m)
-        #TODO this is dense
-        sparse(
-            Float64[
-                get(m.reactions[rid].stoichiometry, mid, 0.0) for mid in A.metabolites(m),
-                rid in rids
-            ],
-        )
+function A.stoichiometry(m::Model)::SparseMat
+    midxs = Dict(mid => idx for (idx,(mid,_)) = enumerate(m.metabolites))
+    I = Int[]
+    J = Int[]
+    V = Float64[]
+    for (ridx, (_, r)) = enumerate(m.reactions)
+        for (smid, v) = r.stoichiometry
+            push!(I, midxs[smid])
+            push!(J, ridx)
+            push!(V, v)
+        end
     end
+    sparse(I, J, V, length(m.metabolites), length(m.reactions))
+end
 
 A.bounds(m::Model) = (
     [m.reactions[rid].lower_bound for rid in A.reactions(m)],
