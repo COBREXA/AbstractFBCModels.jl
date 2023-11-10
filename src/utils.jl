@@ -39,6 +39,8 @@ end
 $(TYPEDSIGNATURES)
 
 Check if the file at `path` has the expected hash.
+
+At this point, the hash is always SHA256.
 """
 function check_cached_file_hash(path, expected_checksum)
     actual_checksum = bytes2hex(sha256(open(path)))
@@ -53,7 +55,7 @@ $(TYPEDSIGNATURES)
 
 Download the file at `url` and save it at `path`, also check if this file is
 the expected file by calling [`check_cached_file_hash`](@ref). If the file has
-already been downloaded, and stored at `path`, then it is not downloaded again.
+already been downloaded and stored at `path`, then it is not downloaded again.
 """
 function download_data_file(url, path, hash)
     if isfile(path)
