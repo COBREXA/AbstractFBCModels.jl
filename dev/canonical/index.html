@@ -140,7 +140,7 @@ A.metabolite_formula(m::Model, id::String) = m.metabolites[id].formula
 A.metabolite_charge(m::Model, id::String) = m.metabolites[id].charge
 A.metabolite_compartment(m::Model, id::String) = m.metabolites[id].compartment
 
-A.load(::Type{Model}, path::String)::Model = S.deserialize(path)
+A.load(::Type{Model}, path::String) = S.deserialize(path)
 A.save(m::Model, path::String) = S.serialize(path, m)
 A.filename_extensions(::Type{Model}) = [&quot;canonical-serialized-fbc&quot;]
 
@@ -156,10 +156,11 @@ function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
                 lower_bound = lb,
                 upper_bound = ub,
                 stoichiometry = A.reaction_stoichiometry(x, r),
+                objective_coefficient = o,
                 gene_association_dnf = A.reaction_gene_association_dnf(x, r),
                 annotations = A.reaction_annotations(x, r),
                 notes = A.reaction_notes(x, r),
-            ) for (r, lb, ub) in zip(A.reactions(x), lbs, ubs)
+            ) for (r, o, lb, ub) in zip(A.reactions(x), os, lbs, ubs)
         ),
         metabolites = Dict(
             m =&gt; Metabolite(
@@ -186,7 +187,7 @@ end # module CanonicalModel</code></pre><p>The definition contains several main 
 import AbstractFBCModels.CanonicalModel: Model
 
 A.run_fbcmodel_type_tests(Model);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Test Summary:                                                | <span class="sgr32">Pass  </span><span class="sgr36">Total  </span>Time</span>
-Model type AbstractFBCModels.CanonicalModel.Model properties | <span class="sgr32">  25  </span><span class="sgr36">   25  </span>0.2s</code></pre><h3 id="Making-a-simple-model-for-value-tests"><a class="docs-heading-anchor" href="#Making-a-simple-model-for-value-tests">Making a simple model for value tests</a><a id="Making-a-simple-model-for-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Making-a-simple-model-for-value-tests" title="Permalink"></a></h3><p>For testing the values, you need to provide an existing file that contains the model. Let&#39;s create some contents first:</p><pre><code class="language-julia hljs">import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene
+Model type AbstractFBCModels.CanonicalModel.Model properties | <span class="sgr32">  25  </span><span class="sgr36">   25  </span>0.1s</code></pre><h3 id="Making-a-simple-model-for-value-tests"><a class="docs-heading-anchor" href="#Making-a-simple-model-for-value-tests">Making a simple model for value tests</a><a id="Making-a-simple-model-for-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Making-a-simple-model-for-value-tests" title="Permalink"></a></h3><p>For testing the values, you need to provide an existing file that contains the model. Let&#39;s create some contents first:</p><pre><code class="language-julia hljs">import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene
 
 m = Model()
 m.metabolites[&quot;m1&quot;] = Metabolite(compartment = &quot;inside&quot;)
@@ -197,6 +198,7 @@ m.reactions[&quot;forward&quot;] = Reaction(
     name = &quot;import&quot;,
     stoichiometry = Dict(&quot;m1&quot; =&gt; -1.0, &quot;m2&quot; =&gt; 1.0),
     gene_association_dnf = [[&quot;g1&quot;], [&quot;g2&quot;]],
+    objective_coefficient = 1.0,
 )
 m.reactions[&quot;and_back&quot;] =
     Reaction(name = &quot;export&quot;, stoichiometry = Dict(&quot;m2&quot; =&gt; -1.0, &quot;m1&quot; =&gt; 1.0))
@@ -211,7 +213,8 @@ m.reactions[&quot;exchange2&quot;] = Reaction(
     gene_association_dnf = [], # DNF encoding of a reaction that never has gene products available
 )</code></pre><p>We should immediately find the basic accessors working:</p><pre><code class="language-julia hljs">A.stoichiometry(m)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 6 stored entries:
   1.0  -1.0    ⋅   -1.0
- -1.0    ⋅   -1.0   1.0</code></pre><p>We can check various side things, such as which reactions would and would not work given all gene products disappear:</p><pre><code class="language-julia hljs">products_available = [
+ -1.0    ⋅   -1.0   1.0</code></pre><pre><code class="language-julia hljs">A.objective(m)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element SparseArrays.SparseVector{Float64, Int64} with 1 stored entry:
+  [4]  =  1.0</code></pre><p>We can check various side things, such as which reactions would and would not work given all gene products disappear:</p><pre><code class="language-julia hljs">products_available = [
     A.reaction_gene_products_available(m, rid, _ -&gt; false) for
     rid in [&quot;forward&quot;, &quot;and_back&quot;, &quot;exchange1&quot;, &quot;exchange2&quot;]
 ]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element Vector{Union{Nothing, Bool}}:
@@ -232,4 +235,4 @@ end</code></pre><pre class="documenter-example-output"><code class="nohighlight 
     A.save(m, path)
     A.run_fbcmodel_file_tests(Model, path, name = &quot;small model&quot;)
 end;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Test Summary:                                                      | <span class="sgr32">Pass  </span><span class="sgr36">Total  </span>Time</span>
-Model `small model&#39; of type AbstractFBCModels.CanonicalModel.Model | <span class="sgr32">  42  </span><span class="sgr36">   42  </span>0.1s</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« README</a><a class="docs-footer-nextpage" href="../utilities/">Utility functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Friday 10 November 2023 09:24">Friday 10 November 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Model `small model&#39; of type AbstractFBCModels.CanonicalModel.Model | <span class="sgr32">  45  </span><span class="sgr36">   45  </span>0.1s</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« README</a><a class="docs-footer-nextpage" href="../utilities/">Utility functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Saturday 9 December 2023 21:08">Saturday 9 December 2023</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
