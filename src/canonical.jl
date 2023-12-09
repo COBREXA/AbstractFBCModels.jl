@@ -139,7 +139,7 @@ A.metabolite_formula(m::Model, id::String) = m.metabolites[id].formula
 A.metabolite_charge(m::Model, id::String) = m.metabolites[id].charge
 A.metabolite_compartment(m::Model, id::String) = m.metabolites[id].compartment
 
-A.load(::Type{Model}, path::String)::Model = S.deserialize(path)
+A.load(::Type{Model}, path::String) = S.deserialize(path)
 A.save(m::Model, path::String) = S.serialize(path, m)
 A.filename_extensions(::Type{Model}) = ["canonical-serialized-fbc"]
 
@@ -155,10 +155,11 @@ function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
                 lower_bound = lb,
                 upper_bound = ub,
                 stoichiometry = A.reaction_stoichiometry(x, r),
+                objective_coefficient = o,
                 gene_association_dnf = A.reaction_gene_association_dnf(x, r),
                 annotations = A.reaction_annotations(x, r),
                 notes = A.reaction_notes(x, r),
-            ) for (r, lb, ub) in zip(A.reactions(x), lbs, ubs)
+            ) for (r, o, lb, ub) in zip(A.reactions(x), os, lbs, ubs)
         ),
         metabolites = Dict(
             m => Metabolite(

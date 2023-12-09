@@ -1,7 +1,7 @@
 name = "AbstractFBCModels"
 uuid = "5a4f3dfa-1789-40f8-8221-69268c29937c"
 authors = ["Authors of AbstractFBCModels.jl"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"

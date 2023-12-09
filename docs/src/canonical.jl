@@ -75,6 +75,7 @@ m.reactions["forward"] = Reaction(
     name = "import",
     stoichiometry = Dict("m1" => -1.0, "m2" => 1.0),
     gene_association_dnf = [["g1"], ["g2"]],
+    objective_coefficient = 1.0,
 )
 m.reactions["and_back"] =
     Reaction(name = "export", stoichiometry = Dict("m2" => -1.0, "m1" => 1.0))
@@ -98,9 +99,14 @@ show_contains(x, y) = contains(sprint(show, MIME"text/plain"(), x), y) #src
 @test show_contains(m.reactions["forward"], "\"g1\"") #src
 @test show_contains(m.metabolites["m1"], "\"inside\"") #src
 @test show_contains(m.genes["g1"], "name = nothing") #src
+@test show_contains(m.genes["g1"], "name = nothing") #src
 
 # We should immediately find the basic accessors working:
 A.stoichiometry(m)
+
+#
+
+A.objective(m)
 
 # We can check various side things, such as which reactions would and would not work given all gene products disappear:
 products_available = [

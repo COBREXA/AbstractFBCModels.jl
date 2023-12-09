@@ -116,6 +116,9 @@ function run_fbcmodel_file_tests(
             @test issetequal(mets, metabolites(m))
             @test issetequal(gens, genes(m))
 
+            @test Dict(rxns .=> collect(obj)) ==
+                  Dict(reactions(m) .=> collect(objective(m)))
+
             # TODO eventually add stricter equality tests
         end
 
