@@ -64,7 +64,7 @@ A.run_fbcmodel_type_tests(Model);
 # For testing the values, you need to provide an existing file that contains
 # the model. Let's create some contents first:
 
-import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene
+import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene, Coupling
 
 m = Model()
 m.metabolites["m1"] = Metabolite(compartment = "inside")
