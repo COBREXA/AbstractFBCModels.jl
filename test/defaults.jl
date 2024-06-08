@@ -21,14 +21,16 @@
     @test isnothing(A.reaction_gene_products_available(m, "", _ -> True))
     @test isnothing(A.reaction_gene_association_dnf(m, ""))
     @test_throws ErrorException A.reaction_stoichiometry(m, "")
+
     @test isnothing(A.metabolite_formula(m, ""))
     @test isnothing(A.metabolite_charge(m, ""))
     @test isnothing(A.metabolite_compartment(m, ""))
+
     @test isempty(A.couplings(m))
     @test A.n_couplings(m) == 0
     @test_throws ErrorException A.coupling(m)
     @test all(isempty, A.coupling_bounds(m))
-    @test_throws ErrorException A.coupling_weights(m, "")
+    @test A.coupling_weights(m, "") == Dict()
 
     @test isempty(A.reaction_annotations(m, ""))
     @test isempty(A.metabolite_annotations(m, ""))
@@ -50,5 +52,5 @@
 
     A.n_reactions(::NotAModel) = 123
 
-    @test size(A.coupling(m) == (0, 123))
+    @test size(A.coupling(m)) == (0, 123)
 end
