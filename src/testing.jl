@@ -86,7 +86,7 @@ function run_fbcmodel_file_tests(
             end
         end
 
-        let ss = Set(rxns), ri = Dict(rxns .=> 1:length(rxns))
+        let rs = Set(rxns), ri = Dict(rxns .=> 1:length(rxns))
             for (cidx, cid) in enumerate(cpls)
                 for (rxn, w) in coupling_weights(model, cid)
                     # test if coupling weights are the same as with the matrix

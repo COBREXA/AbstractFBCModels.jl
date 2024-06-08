@@ -226,7 +226,7 @@ function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
             ) for g in A.genes(x)
         ),
         couplings = Dict(
-            cid => Coupling(
+            c => Coupling(
                 name = A.coupling_name(x, c),
                 lower_bound = lb,
                 upper_bound = ub,
