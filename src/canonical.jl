@@ -105,7 +105,7 @@ Base.@kwdef struct Model <: A.AbstractFBCModel
     reactions::Dict{String,Reaction} = Dict()
     metabolites::Dict{String,Metabolite} = Dict()
     genes::Dict{String,Gene} = Dict()
-    couplings::Dict{String,CouplingBound} = Dict()
+    couplings::Dict{String,Coupling} = Dict()
 end
 
 Base.show(io::Base.IO, ::MIME"text/plain", x::Model) = A.pretty_print_kwdef(io, x)
