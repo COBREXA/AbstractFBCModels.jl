@@ -89,6 +89,11 @@ m.reactions["exchange2"] = Reaction(
     stoichiometry = Dict("m2" => -1.0),
     gene_association_dnf = [], # DNF encoding of a reaction that never has gene products available
 )
+m.couplings["total_exchange_limit"] = Coupling(
+    lower_bound = 0,
+    upper_bound = 10,
+    reaction_weights = Dict("exchange$i" => 1.0 for i = 1:2),
+)
 nothing #hide
 
 show_contains(x, y) = contains(sprint(show, MIME"text/plain"(), x), y) #src
@@ -99,7 +104,9 @@ show_contains(x, y) = contains(sprint(show, MIME"text/plain"(), x), y) #src
 @test show_contains(m.reactions["forward"], "\"g1\"") #src
 @test show_contains(m.metabolites["m1"], "\"inside\"") #src
 @test show_contains(m.genes["g1"], "name = nothing") #src
-@test show_contains(m.genes["g1"], "name = nothing") #src
+@test show_contains(m.genes["g2"], "name = nothing") #src
+@test show_contains(m.couplings["total_exchange_limit"], "name = nothing") #src
+@test show_contains(m.couplings["total_exchange_limit"], "upper_bound = 10") #src
 
 # We should immediately find the basic accessors working:
 A.stoichiometry(m)
@@ -107,6 +114,10 @@ A.stoichiometry(m)
 #
 
 A.objective(m)
+
+#
+
+A.coupling(m)
 
 # We can check various side things, such as which reactions would and would not work given all gene products disappear:
 products_available = [
