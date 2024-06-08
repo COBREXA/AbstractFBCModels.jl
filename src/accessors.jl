@@ -120,7 +120,7 @@ $(TYPEDSIGNATURES)
 
 Lower and upper bounds of all couplings in the model.
 """
-coupling(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
+coupling_bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
     (fill(-Inf, n_couplings(a)), fill(Inf, n_couplings(a)))
 
 """
