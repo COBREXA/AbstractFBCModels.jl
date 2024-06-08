@@ -25,7 +25,7 @@
     @test isnothing(A.metabolite_charge(m, ""))
     @test isnothing(A.metabolite_compartment(m, ""))
     @test isempty(A.couplings(m))
-    @test A.a_couplings(m) == 0
+    @test A.n_couplings(m) == 0
     @test_throws ErrorException A.coupling(m)
     @test all(isempty, A.coupling_bounds(m))
     @test_throws ErrorException A.coupling_weights(m, "")
