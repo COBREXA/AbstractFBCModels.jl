@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Implementing new model types · AbstractFBCModels.jl</title><meta name="title" content="Implementing new model types · AbstractFBCModels.jl"/><meta property="og:title" content="Implementing new model types · AbstractFBCModels.jl"/><meta property="twitter:title" content="Implementing new model types · AbstractFBCModels.jl"/><meta name="description" content="Documentation for AbstractFBCModels.jl."/><meta property="og:description" content="Documentation for AbstractFBCModels.jl."/><meta property="twitter:description" content="Documentation for AbstractFBCModels.jl."/><meta property="og:url" content="https://cobrexa.github.io/AbstractFBCModels.jl/stable/canonical/"/><meta property="twitter:url" content="https://cobrexa.github.io/AbstractFBCModels.jl/stable/canonical/"/><link rel="canonical" href="https://cobrexa.github.io/AbstractFBCModels.jl/stable/canonical/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="AbstractFBCModels.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">AbstractFBCModels.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">README</a></li><li class="is-active"><a class="tocitem" href>Implementing new model types</a><ul class="internal"><li><a class="tocitem" href="#Defining-the-model"><span>Defining the model</span></a></li><li><a class="tocitem" href="#Testing-your-model-definition"><span>Testing your model definition</span></a></li></ul></li><li><a class="tocitem" href="../utilities/">Utility functions</a></li><li><a class="tocitem" href="../reference/">Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Implementing new model types</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Implementing new model types</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/COBREXA/AbstractFBCModels.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/COBREXA/AbstractFBCModels.jl/blob/master/docs/src/canonical.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Implementing-new-model-types"><a class="docs-heading-anchor" href="#Implementing-new-model-types">Implementing new model types</a><a id="Implementing-new-model-types-1"></a><a class="docs-heading-anchor-permalink" href="#Implementing-new-model-types" title="Permalink"></a></h1><p>For convenience, <code>AbstractFBCModels</code> defines a &quot;canonical&quot; implementation of a FBC model: a completely generic data structure that can store exactly the complete information that is representable by the <code>AbstractFBCModel</code> accessors, and nothing else.</p><p>The type is not useful for actually constructing the models, but may serve a good purpose in several other cases:</p><ul><li>If you need an &quot;intermediate step&quot; when converting complicated FBC models to other types, the canonical model is guaranteed not to lose any information, yet perform relatively well when re-exporting the information via the accessors.</li><li>If you need to make quick modifications to another model type that does not admin easy mutation (e.g., it is made of immutable <code>struct</code>s), you can convert to the canonical model and make the small fixes in there.</li><li>Here, we use it for describing how to &quot;perform&quot; your own definition of model type, and demonstrate the use of the pre-defined testing framework on it.</li></ul><p>The model is available for use as <code>AbstractFBCModels.CanonicalModel.Model</code></p><h2 id="Defining-the-model"><a class="docs-heading-anchor" href="#Defining-the-model">Defining the model</a><a id="Defining-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-the-model" title="Permalink"></a></h2><p>For convenience in the later explanation, we list the whole definition of the module here:</p><pre><code class="language-julia hljs">
+module CanonicalModel
+
+using DocStringExtensions
+
+import ..AbstractFBCModels as A
+import Serialization as S
+import SparseArrays: sparse, findnz
+
+&quot;&quot;&quot;
+$(TYPEDEF)
+
+A canonical Julia representation of a reaction in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+&quot;&quot;&quot;
+Base.@kwdef mutable struct Reaction
+    name::A.Maybe{String} = nothing
+    lower_bound::Float64 = -Inf
+    upper_bound::Float64 = Inf
+    stoichiometry::Dict{String,Float64} = Dict()
+    objective_coefficient::Float64 = 0.0
+    gene_association_dnf::A.Maybe{A.GeneAssociationDNF} = nothing
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
+end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Reaction) = A.pretty_print_kwdef(io, x)
+
+&quot;&quot;&quot;
+$(TYPEDEF)
+
+A canonical Julia representation of a metabolite in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+&quot;&quot;&quot;
+Base.@kwdef mutable struct Metabolite
+    name::A.Maybe{String} = nothing
+    compartment::A.Maybe{String} = nothing
+    formula::A.Maybe{A.MetaboliteFormula} = nothing
+    charge::A.Maybe{Int} = nothing
+    balance::Float64 = 0.0
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
+end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Metabolite) = A.pretty_print_kwdef(io, x)
+
+&quot;&quot;&quot;
+$(TYPEDEF)
+
+A canonical Julia representation of a gene in the `AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+&quot;&quot;&quot;
+Base.@kwdef mutable struct Gene
+    name::A.Maybe{String} = nothing
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
+end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Gene) = A.pretty_print_kwdef(io, x)
+
+&quot;&quot;&quot;
+$(TYPEDEF)
+
+A canonical Julia representation of a row in a coupling matrix of the
+`AbstractFBCModels` interface.
+
+# Fields
+$(TYPEDFIELDS)
+&quot;&quot;&quot;
+Base.@kwdef mutable struct Coupling
+    name::A.Maybe{String} = nothing
+    reaction_weights::Dict{String,Float64} = Dict()
+    lower_bound::Float64 = -Inf
+    upper_bound::Float64 = Inf
+    annotations::A.Annotations = A.Annotations()
+    notes::A.Notes = A.Notes()
+end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Coupling) = A.pretty_print_kwdef(io, x)
+
+&quot;&quot;&quot;
+$(TYPEDEF)
+
+A canonical Julia representation of a metabolic model that sotres exactly the
+data represented by `AbstractFBCModels` accessors.
+
+The implementation is useful for manipulating model data manually without
+writing new model types, or even for constructing models from base data in many
+simple cases.
+
+Additionally, you can use the implementation of accessors for this model type
+in the source code of `AbstractFBCModels` as a starting point for creating an
+`AbstractFBCModel` interface for your own models.
+
+# Fields
+$(TYPEDFIELDS)
+&quot;&quot;&quot;
+Base.@kwdef struct Model &lt;: A.AbstractFBCModel
+    reactions::Dict{String,Reaction} = Dict()
+    metabolites::Dict{String,Metabolite} = Dict()
+    genes::Dict{String,Gene} = Dict()
+    couplings::Dict{String,Coupling} = Dict()
+end
+
+Base.show(io::Base.IO, ::MIME&quot;text/plain&quot;, x::Model) = A.pretty_print_kwdef(io, x)
+
+A.reactions(m::Model) = sort(collect(keys(m.reactions)))
+A.metabolites(m::Model) = sort(collect(keys(m.metabolites)))
+A.genes(m::Model) = sort(collect(keys(m.genes)))
+A.couplings(m::Model) = sort(collect(keys(m.couplings)))
+A.n_reactions(m::Model) = length(m.reactions)
+A.n_metabolites(m::Model) = length(m.metabolites)
+A.n_genes(m::Model) = length(m.genes)
+A.n_couplings(m::Model) = length(m.couplings)
+A.reaction_name(m::Model, id::String) = m.reactions[id].name
+A.metabolite_name(m::Model, id::String) = m.metabolites[id].name
+A.gene_name(m::Model, id::String) = m.genes[id].name
+A.coupling_name(m::Model, id::String) = m.couplings[id].name
+A.reaction_annotations(m::Model, id::String) = m.reactions[id].annotations
+A.metabolite_annotations(m::Model, id::String) = m.metabolites[id].annotations
+A.gene_annotations(m::Model, id::String) = m.genes[id].annotations
+A.coupling_annotations(m::Model, id::String) = m.couplings[id].annotations
+A.reaction_notes(m::Model, id::String) = m.reactions[id].notes
+A.metabolite_notes(m::Model, id::String) = m.metabolites[id].notes
+A.gene_notes(m::Model, id::String) = m.genes[id].notes
+A.coupling_notes(m::Model, id::String) = m.couplings[id].notes
+
+function A.stoichiometry(m::Model)
+    midxs = Dict(mid =&gt; idx for (idx, mid) in enumerate(A.metabolites(m)))
+    I = Int[]
+    J = Int[]
+    V = Float64[]
+    for (ridx, rid) in enumerate(A.reactions(m))
+        for (smid, v) in m.reactions[rid].stoichiometry
+            push!(I, midxs[smid])
+            push!(J, ridx)
+            push!(V, v)
+        end
+    end
+    sparse(I, J, V, A.n_metabolites(m), A.n_reactions(m))
+end
+
+function A.coupling(m::Model)
+    ridxs = Dict(rid =&gt; idx for (idx, rid) in enumerate(A.reactions(m)))
+    I = Int[]
+    J = Int[]
+    V = Float64[]
+    for (cidx, cid) in enumerate(A.couplings(m))
+        for (rid, v) in m.couplings[cid].reaction_weights
+            push!(I, cidx)
+            push!(J, ridxs[rid])
+            push!(V, v)
+        end
+    end
+    sparse(I, J, V, A.n_couplings(m), A.n_reactions(m))
+end
+
+A.bounds(m::Model) = (
+    [m.reactions[rid].lower_bound for rid in A.reactions(m)],
+    [m.reactions[rid].upper_bound for rid in A.reactions(m)],
+)
+
+A.coupling_bounds(m::Model) = (
+    [m.couplings[cid].lower_bound for cid in A.couplings(m)],
+    [m.couplings[cid].upper_bound for cid in A.couplings(m)],
+)
+
+A.balance(m::Model) =
+    sparse(Float64[m.metabolites[mid].balance for mid in A.metabolites(m)])
+A.objective(m::Model) =
+    sparse(Float64[m.reactions[rid].objective_coefficient for rid in A.reactions(m)])
+
+A.reaction_gene_association_dnf(m::Model, id::String) = m.reactions[id].gene_association_dnf
+A.reaction_gene_products_available(m::Model, id::String, fn::Function) =
+    A.reaction_gene_products_available_from_dnf(m, id, fn)
+A.reaction_stoichiometry(m::Model, id::String) = m.reactions[id].stoichiometry
+
+A.metabolite_formula(m::Model, id::String) = m.metabolites[id].formula
+A.metabolite_charge(m::Model, id::String) = m.metabolites[id].charge
+A.metabolite_compartment(m::Model, id::String) = m.metabolites[id].compartment
+
+A.coupling_weights(m::Model, id::String) = m.couplings[id].reaction_weights
+
+A.load(::Type{Model}, path::String) = S.deserialize(path)
+A.save(m::Model, path::String) = S.serialize(path, m)
+A.filename_extensions(::Type{Model}) = [&quot;canonical-serialized-fbc&quot;]
+
+function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
+    (lbs, ubs) = A.bounds(x)
+    (clbs, cubs) = A.coupling_bounds(x)
+    Model(
+        reactions = Dict(
+            r =&gt; Reaction(
+                name = A.reaction_name(x, r),
+                lower_bound = lb,
+                upper_bound = ub,
+                stoichiometry = A.reaction_stoichiometry(x, r),
+                objective_coefficient = o,
+                gene_association_dnf = A.reaction_gene_association_dnf(x, r),
+                annotations = A.reaction_annotations(x, r),
+                notes = A.reaction_notes(x, r),
+            ) for (r, o, lb, ub) in zip(A.reactions(x), A.objective(x), lbs, ubs)
+        ),
+        metabolites = Dict(
+            m =&gt; Metabolite(
+                name = A.metabolite_name(x, m),
+                balance = b,
+                formula = A.metabolite_formula(x, m),
+                charge = A.metabolite_charge(x, m),
+                compartment = A.metabolite_compartment(x, m),
+                annotations = A.metabolite_annotations(x, m),
+                notes = A.metabolite_notes(x, m),
+            ) for (m, b) in zip(A.metabolites(x), A.balance(x))
+        ),
+        genes = Dict(
+            g =&gt; Gene(
+                name = A.gene_name(x, g),
+                annotations = A.gene_annotations(x, g),
+                notes = A.gene_notes(x, g),
+            ) for g in A.genes(x)
+        ),
+        couplings = Dict(
+            c =&gt; Coupling(
+                name = A.coupling_name(x, c),
+                lower_bound = lb,
+                upper_bound = ub,
+                reaction_weights = A.coupling_weights(x, c),
+                annotations = A.coupling_annotations(x, c),
+                notes = A.coupling_notes(x, c),
+            ) for (c, lb, ub) in zip(A.couplings(x), clbs, cubs)
+        ),
+    )
+end
+
+end # module CanonicalModel</code></pre><p>The definition contains several main parts:</p><ul><li>the data structures for the model and all the main parts</li><li>overloaded accessors that provide generic access for the things in the model</li><li>overloaded loading and saving functions, together with the declaration of the common model suffixes</li><li>a conversion function that can extract data using accessors from any other <code>AbstractFBCModel</code> and construct the canonical model.</li></ul><p>Notably, the default file extension is chosen as very unwieldy so that no one ever really exchanges data using this model type.</p><h2 id="Testing-your-model-definition"><a class="docs-heading-anchor" href="#Testing-your-model-definition">Testing your model definition</a><a id="Testing-your-model-definition-1"></a><a class="docs-heading-anchor-permalink" href="#Testing-your-model-definition" title="Permalink"></a></h2><p>Apart from making sure that the accessors work by usual unit tests, you can use 2 testing functions that scrutinize the expected properties of the model type both solely as a type, and using an example model file. These allow you to discover potential problems, as well as build a self-updating test suite for your model that provides long-term sustainability and quality assurance.</p><h3 id="Running-type-level-tests"><a class="docs-heading-anchor" href="#Running-type-level-tests">Running type-level tests</a><a id="Running-type-level-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Running-type-level-tests" title="Permalink"></a></h3><p>Typically, the test suite would run the following to check if types of everything match the expectations.</p><pre><code class="language-julia hljs">import AbstractFBCModels as A
+import AbstractFBCModels.CanonicalModel: Model
+
+A.run_fbcmodel_type_tests(Model);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Test Summary:                                                | <span class="sgr32">Pass  </span><span class="sgr36">Total  </span>Time</span>
+Model type AbstractFBCModels.CanonicalModel.Model properties | <span class="sgr32">  33  </span><span class="sgr36">   33  </span>0.1s</code></pre><h3 id="Making-a-simple-model-for-value-tests"><a class="docs-heading-anchor" href="#Making-a-simple-model-for-value-tests">Making a simple model for value tests</a><a id="Making-a-simple-model-for-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Making-a-simple-model-for-value-tests" title="Permalink"></a></h3><p>For testing the values, you need to provide an existing file that contains the model. Let&#39;s create some contents first:</p><pre><code class="language-julia hljs">import AbstractFBCModels.CanonicalModel: Reaction, Metabolite, Gene, Coupling
+
+m = Model()
+m.metabolites[&quot;m1&quot;] = Metabolite(compartment = &quot;inside&quot;)
+m.metabolites[&quot;m2&quot;] = Metabolite(compartment = &quot;outside&quot;)
+m.genes[&quot;g1&quot;] = Gene()
+m.genes[&quot;g2&quot;] = Gene()
+m.reactions[&quot;forward&quot;] = Reaction(
+    name = &quot;import&quot;,
+    stoichiometry = Dict(&quot;m1&quot; =&gt; -1.0, &quot;m2&quot; =&gt; 1.0),
+    gene_association_dnf = [[&quot;g1&quot;], [&quot;g2&quot;]],
+    objective_coefficient = 1.0,
+)
+m.reactions[&quot;and_back&quot;] =
+    Reaction(name = &quot;export&quot;, stoichiometry = Dict(&quot;m2&quot; =&gt; -1.0, &quot;m1&quot; =&gt; 1.0))
+m.reactions[&quot;exchange1&quot;] = Reaction(
+    name = &quot;exchange m1&quot;,
+    stoichiometry = Dict(&quot;m1&quot; =&gt; -1.0),
+    gene_association_dnf = [[]], # DNF encoding of a reaction that requires no gene products
+)
+m.reactions[&quot;exchange2&quot;] = Reaction(
+    name = &quot;exchange m2&quot;,
+    stoichiometry = Dict(&quot;m2&quot; =&gt; -1.0),
+    gene_association_dnf = [], # DNF encoding of a reaction that never has gene products available
+)
+m.couplings[&quot;total_exchange_limit&quot;] = Coupling(
+    lower_bound = 0,
+    upper_bound = 10,
+    reaction_weights = Dict(&quot;exchange$i&quot; =&gt; 1.0 for i = 1:2),
+)</code></pre><p>We should immediately find the basic accessors working:</p><pre><code class="language-julia hljs">A.stoichiometry(m)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 6 stored entries:
+  1.0  -1.0    ⋅   -1.0
+ -1.0    ⋅   -1.0   1.0</code></pre><pre><code class="language-julia hljs">A.objective(m)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element SparseArrays.SparseVector{Float64, Int64} with 1 stored entry:
+  [4]  =  1.0</code></pre><pre><code class="language-julia hljs">A.coupling(m)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 2 stored entries:
+  ⋅   1.0  1.0   ⋅ </code></pre><p>We can check various side things, such as which reactions would and would not work given all gene products disappear:</p><pre><code class="language-julia hljs">products_available = [
+    A.reaction_gene_products_available(m, rid, _ -&gt; false) for
+    rid in [&quot;forward&quot;, &quot;and_back&quot;, &quot;exchange1&quot;, &quot;exchange2&quot;]
+]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element Vector{Union{Nothing, Bool}}:
+ false
+      nothing
+  true
+ false</code></pre><p>We can now also write the model to disk and try to load it with the default loading function:</p><pre><code class="language-julia hljs">mktempdir() do dir
+    path = joinpath(dir, &quot;model.canonical-serialized-fbc&quot;)
+    A.save(m, path)
+    A.load(path)
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">AbstractFBCModels.CanonicalModel.Model(
+  reactions = Dict{String, AbstractFBCModels.CanonicalModel.Reaction}(&quot;forward&quot;…
+  metabolites = Dict{String, AbstractFBCModels.CanonicalModel.Metabolite}(&quot;m2&quot; …
+  genes = Dict{String, AbstractFBCModels.CanonicalModel.Gene}(&quot;g2&quot; =&gt; AbstractF…
+  couplings = Dict{String, AbstractFBCModels.CanonicalModel.Coupling}(&quot;total_ex…
+)
+</code></pre><h3 id="Running-the-value-tests"><a class="docs-heading-anchor" href="#Running-the-value-tests">Running the value tests</a><a id="Running-the-value-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Running-the-value-tests" title="Permalink"></a></h3><p>Given the data, value tests have an opportunity to scrutinize much greater amount of properties of the model implementation.</p><p>Running the tests requires a model type and an &quot;example&quot; model file:</p><pre><code class="language-julia hljs">mktempdir() do dir
+    path = joinpath(dir, &quot;model.canonical-serialized-fbc&quot;)
+    A.save(m, path)
+    A.run_fbcmodel_file_tests(Model, path, name = &quot;small model&quot;)
+end;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr1">Test Summary:                                                      | <span class="sgr32">Pass  </span><span class="sgr36">Total  </span>Time</span>
+Model `small model&#39; of type AbstractFBCModels.CanonicalModel.Model | <span class="sgr32">  57  </span><span class="sgr36">   57  </span>0.1s</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« README</a><a class="docs-footer-nextpage" href="../utilities/">Utility functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Sunday 9 June 2024 11:35">Sunday 9 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
