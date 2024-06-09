@@ -21,18 +21,10 @@ function accessors()
     for nm in names(AbstractFBCModels; all = true)
         f = getfield(AbstractFBCModels, nm)
         if isa(f, Base.Callable)
-            try
-                methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
-            catch
-                # Earlier versions of Julia tend to throw MethodErrors here
-                # whenever the method actually doesn't exist (e.g. 1.6.x
-                # reports that it's actually a missing `methodswith` method
-                # rather than the one of `f`. If that happens, we can simply do
-                # nothing.
-            end
+            methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
         end
     end
-    ms
+    return ms
 end
 
 """

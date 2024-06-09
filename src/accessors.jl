@@ -65,6 +65,30 @@ n_genes(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_genes)
 """
 $(TYPEDSIGNATURES)
 
+Return identifiers of all coupling bounds contained in the model. Empty if
+none.
+
+Coupling bounds are typically not named in models, but should be.
+
+COMPATIBILITY NOTE: Couplings currently default to empty to prevent breakage.
+This behavior will change with next major version.
+"""
+couplings(a::AbstractFBCModel)::Vector{String} = String[]
+
+"""
+$(TYPEDSIGNATURES)
+
+The number of coupling bounds in the model (must be equal to the length of
+vector given by [`couplings`](@ref)).
+
+This may be more efficient than calling [`couplings`](@ref) and measuring the
+array.
+"""
+n_couplings(a::AbstractFBCModel)::Int = length(couplings(a))
+
+"""
+$(TYPEDSIGNATURES)
+
 The sparse stoichiometric matrix of a given model.
 
 This usually corresponds to all the equality constraints in the model. The
@@ -75,7 +99,18 @@ stoichiometry(a::AbstractFBCModel)::SparseMat = unimplemented(typeof(a), :stoich
 """
 $(TYPEDSIGNATURES)
 
-Get the lower and upper bounds of all reactions in a model.
+Sparse matrix that describes the coupling of a given model.
+
+This usually corresponds to all additional constraints in the model, such as
+the ones used for split-direction reactions and community modeling. The matrix
+must be of size [`n_couplings`](@ref) by [`n_reactions`](@ref).
+"""
+coupling(a::AbstractFBCModel)::SparseMat = spzeros(n_couplings(a), n_reactions(a))
+
+"""
+$(TYPEDSIGNATURES)
+
+Lower and upper bounds of all reactions in the model.
 """
 bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
     unimplemented(typeof(a), :bounds)
@@ -83,15 +118,25 @@ bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
 """
 $(TYPEDSIGNATURES)
 
+Lower and upper bounds of all couplings in the model.
+"""
+coupling_bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
+    (fill(-Inf, n_couplings(a)), fill(Inf, n_couplings(a)))
+
+"""
+$(TYPEDSIGNATURES)
+
 Get the sparse balance vector of a model, which usually corresponds to the
 accumulation term associated with stoichiometric matrix.
+
+By default, the balance is assumed to be exactly zero.
 """
 balance(a::AbstractFBCModel)::SparseVec = spzeros(n_metabolites(a))
 
 """
 $(TYPEDSIGNATURES)
 
-Get the objective vector of the model.
+The objective vector of the model.
 """
 objective(a::AbstractFBCModel)::SparseVec = unimplemented(typeof(a), :objective)
 
@@ -245,3 +290,37 @@ $(TYPEDSIGNATURES)
 The name of the given gene in the model, if recorded.
 """
 gene_name(::AbstractFBCModel, gene_id::String)::Maybe{String} = nothing
+
+"""
+$(TYPEDSIGNATURES)
+
+The weights of reactions in the given coupling bound. Returns a dictionary that
+maps the reaction IDs to their weights.
+
+Using this function may be more efficient in cases than loading the whole
+[`coupling`](@ref).
+"""
+coupling_weights(a::AbstractFBCModel, coupling_id::String)::Dict{String,Float64} = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+A dictionary of standardized names that may help to identify the corresponding
+coupling.
+"""
+coupling_annotations(::AbstractFBCModel, coupling_id::String)::Annotations = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+Free-text notes organized in a dictionary by topics about the given coupling in
+the model.
+"""
+coupling_notes(::AbstractFBCModel, coupling_id::String)::Notes = Dict()
+
+"""
+$(TYPEDSIGNATURES)
+
+The name of the given coupling in the model, if recorded.
+"""
+coupling_name(::AbstractFBCModel, coupling_id::String)::Maybe{String} = nothing

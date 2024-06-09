@@ -44,22 +44,34 @@ function run_fbcmodel_file_tests(
         @test m2 isa X
 
         S = stoichiometry(model)
+        C = coupling(model)
         rxns = reactions(model)
         mets = metabolites(model)
         gens = genes(model)
+        cpls = couplings(model)
 
         @test n_reactions(model) == length(rxns)
         @test n_metabolites(model) == length(mets)
         @test n_genes(model) == length(gens)
+        @test n_couplings(model) == length(cpls)
 
         # test sizing
         @test size(S) == (length(mets), length(rxns))
+        @test size(C) == (length(cpls), length(rxns))
         @test length(balance(model)) == size(S, 1)
+
         bs = bounds(model)
         @test bs isa Tuple{Vector{Float64},Vector{Float64}}
         lbs, ubs = bs
         @test length(lbs) == size(S, 2)
         @test length(ubs) == size(S, 2)
+
+        cbs = coupling_bounds(model)
+        @test cbs isa Tuple{Vector{Float64},Vector{Float64}}
+        clbs, cubs = cbs
+        @test length(clbs) == size(C, 1)
+        @test length(cubs) == size(C, 1)
+
         obj = objective(model)
         @test length(obj) == size(S, 2)
 
@@ -70,6 +82,18 @@ function run_fbcmodel_file_tests(
                     @atest met in ms "metabolite `$met' in reaction_stoichiometry() of `$rid' is in metabolites()"
                     @atest S[mi[met], ridx] == stoi "reaction_stoichiometry() of reaction `$rid' matches the column in stoichiometry() matrix"
                 end
+                # TODO also test the other direction
+            end
+        end
+
+        let rs = Set(rxns), ri = Dict(rxns .=> 1:length(rxns))
+            for (cidx, cid) in enumerate(cpls)
+                for (rxn, w) in coupling_weights(model, cid)
+                    # test if coupling weights are the same as with the matrix
+                    @atest rxn in rs "reaction `$rxn' in coupling_weights() of `$cid' is in reactions()"
+                    @atest C[cidx, ri[rxn]] == w "coupling_weights() of coupling `$cid' matches the row in coupling() matrix"
+                end
+                # TODO also test the other direction
             end
         end
 
@@ -115,6 +139,7 @@ function run_fbcmodel_file_tests(
             @test issetequal(rxns, reactions(m))
             @test issetequal(mets, metabolites(m))
             @test issetequal(gens, genes(m))
+            @test issetequal(cpls, couplings(m))
 
             @test Dict(rxns .=> collect(obj)) ==
                   Dict(reactions(m) .=> collect(objective(m)))
@@ -148,8 +173,12 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(n_metabolites, Int, X)
         rt(genes, Vector{String}, X)
         rt(n_genes, Int, X)
+        rt(couplings, Vector{String}, X)
+        rt(n_couplings, Int, X)
         rt(stoichiometry, SparseMat, X)
+        rt(coupling, SparseMat, X)
         rt(bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
+        rt(coupling_bounds, Tuple{Vector{Float64},Vector{Float64}}, X)
         rt(objective, SparseVec, X)
         rt(balance, SparseVec, X)
 
@@ -170,5 +199,10 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(gene_name, Maybe{String}, X, String)
         rt(gene_annotations, Annotations, X, String)
         rt(gene_notes, Notes, X, String)
+
+        rt(coupling_weights, Dict{String,Float64}, X, String)
+        rt(coupling_name, Maybe{String}, X, String)
+        rt(coupling_annotations, Annotations, X, String)
+        rt(coupling_notes, Notes, X, String)
     end
 end
