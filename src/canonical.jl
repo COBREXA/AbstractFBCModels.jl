@@ -101,7 +101,7 @@ in the source code of `AbstractFBCModels` as a starting point for creating an
 # Fields
 $(TYPEDFIELDS)
 """
-Base.@kwdef struct Model <: A.AbstractFBCModel
+Base.@kwdef mutable struct Model <: A.AbstractFBCModel
     reactions::Dict{String,Reaction} = Dict()
     metabolites::Dict{String,Metabolite} = Dict()
     genes::Dict{String,Gene} = Dict()
