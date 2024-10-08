@@ -28,6 +28,7 @@ end
 unimplemented(t::Type, x::Symbol) =
     error("AbstractFBCModels interface method $x is not implemented for type $t")
 
+
 """
 $(TYPEDSIGNATURES)
 
@@ -43,10 +44,17 @@ function accessors()
         end
     end
 
+    append!(ms, _type_accessors())
+    return ms
+end
+
+function _type_accessors()
     # special case these as they take the type not the instance
+    ms = Method[]
     for f in (AbstractFBCModels.load, AbstractFBCModels.filename_extensions)
         for m in methods(f)
             m.sig isa UnionAll || continue
+            # Deep magic: basically this matches on `f(::Type{A},...) where A<:AbstractFBCModel`
             type_param = Base.unwrap_unionall(m.sig).parameters[2].parameters[1].ub
             if type_param == AbstractFBCModels.AbstractFBCModel
                 push!(ms, m)
@@ -56,6 +64,7 @@ function accessors()
 
     return ms
 end
+
 
 """
 $(TYPEDSIGNATURES)
