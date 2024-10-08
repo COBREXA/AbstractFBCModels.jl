@@ -49,7 +49,7 @@ function accessors()
 end
 
 function _type_accessors()
-    # special case these as they take the type not the instance
+    # special case: some "accessors" take the Type argument instead of actual instance
     ms = Method[]
     for f in (AbstractFBCModels.load, AbstractFBCModels.filename_extensions)
         for m in methods(f)
