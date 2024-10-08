@@ -17,16 +17,16 @@ macro required(sig)
     model_arg isa Symbol || error("malformed signature definition")
 
     # magic to use the call-site line numbers so methods includes them
-    def = Expr(:(=), call_ex, Expr(:block, __source__, 
-        :($unimplemented(typeof($model_arg), $(Meta.quot(name))))
-    ))
-    return esc(
-        quote
-            $def
-            push!(REQUIRED_ACCESSORS, $name)
-            Base.@__doc__ $name
-        end,
+    def = Expr(
+        :(=),
+        call_ex,
+        Expr(:block, __source__, :($unimplemented(typeof($model_arg), $(Meta.quot(name))))),
     )
+    return esc(quote
+        $def
+        push!(REQUIRED_ACCESSORS, $name)
+        Base.@__doc__ $name
+    end)
 end
 
 unimplemented(t::Type, x::Symbol) =
