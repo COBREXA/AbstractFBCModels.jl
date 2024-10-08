@@ -28,17 +28,12 @@ end
 unimplemented(t::Type, x::Symbol) =
     error("AbstractFBCModels interface method $x is not implemented for type $t")
 
+
 """
 $(TYPEDSIGNATURES)
 
 Provide a `methodswith`-style listing of accessors that the model implementors
 may implement.
-
-For typesystem reasons, the list **will not contain** methods for
-[`load`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
-You should implement these as well.
-
-See also [`required_accessors`](@ref) for the minimal list that must be implemented.
 """
 function accessors()
     ms = Method[]
@@ -48,8 +43,28 @@ function accessors()
             methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
         end
     end
+
+    append!(ms, _type_accessors())
     return ms
 end
+
+function _type_accessors()
+    # special case: some "accessors" take the Type argument instead of actual instance
+    ms = Method[]
+    for f in (AbstractFBCModels.load, AbstractFBCModels.filename_extensions)
+        for m in methods(f)
+            m.sig isa UnionAll || continue
+            # Deep magic: basically this matches on `f(::Type{A},...) where A<:AbstractFBCModel`
+            type_param = Base.unwrap_unionall(m.sig).parameters[2].parameters[1].ub
+            if type_param == AbstractFBCModels.AbstractFBCModel
+                push!(ms, m)
+            end
+        end
+    end
+
+    return ms
+end
+
 
 """
 $(TYPEDSIGNATURES)
@@ -70,6 +85,7 @@ function required_accessors()
     for f in REQUIRED_ACCESSORS
         methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
     end
+    append!(ms, _type_accessors())
     return ms
 end
 
