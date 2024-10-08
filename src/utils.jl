@@ -33,12 +33,6 @@ $(TYPEDSIGNATURES)
 
 Provide a `methodswith`-style listing of accessors that the model implementors
 may implement.
-
-For typesystem reasons, the list **will not contain** methods for
-[`load`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
-You should implement these as well.
-
-See also [`required_accessors`](@ref) for the minimal list that must be implemented.
 """
 function accessors()
     ms = Method[]
@@ -48,6 +42,18 @@ function accessors()
             methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
         end
     end
+
+    # special case these as they take the type not the instance
+    for f in (AbstractFBCModels.load, AbstractFBCModels.filename_extensions)
+        for m in methods(f)
+            m.sig isa UnionAll || continue
+            type_param = Base.unwrap_unionall(m.sig).parameters[2].parameters[1].ub
+            if type_param == AbstractFBCModels.AbstractFBCModel
+                push!(ms, m)
+            end
+        end
+    end
+
     return ms
 end
 
