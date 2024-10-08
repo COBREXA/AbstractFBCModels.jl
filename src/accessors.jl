@@ -188,7 +188,10 @@ maps the metabolite IDs to their stoichiometric coefficients.
 Using this function may be more efficient in cases than loading the whole
 [`stoichiometry`](@ref).
 """
-@required reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64}
+@required reaction_stoichiometry(
+    a::AbstractFBCModel,
+    reaction_id::String,
+)::Dict{String,Float64}
 
 """
 $(TYPEDSIGNATURES)

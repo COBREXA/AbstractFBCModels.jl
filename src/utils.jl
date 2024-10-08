@@ -10,17 +10,19 @@ macro required(sig)
     call_ex.head == :call || error("malformed signature definition")
     name = call_ex.args[1]
     name isa Symbol || error("malformed signature definition")
-    
+
     model_arg_ex = call_ex.args[2]
     model_arg_ex.head == :(::) || error("malformed signature definition")
     model_arg = model_arg_ex.args[1]
     model_arg isa Symbol || error("malformed signature definition")
 
-    return esc(quote
-        Base.@__doc__ $call_ex = $unimplemented(typeof($model_arg), $(Meta.quot(name))) 
-        push!(REQUIRED_ACCESSORS, $name)
-        $name
-    end)
+    return esc(
+        quote
+            Base.@__doc__ $call_ex = $unimplemented(typeof($model_arg), $(Meta.quot(name)))
+            push!(REQUIRED_ACCESSORS, $name)
+            $name
+        end,
+    )
 end
 
 unimplemented(t::Type, x::Symbol) =
@@ -65,7 +67,7 @@ cause runtime errors) are exactly the ones listed by this function.
 """
 function required_accessors()
     ms = Method[]
-    for f = REQUIRED_ACCESSORS
+    for f in REQUIRED_ACCESSORS
         methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
     end
     return ms
