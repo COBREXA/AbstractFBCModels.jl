@@ -85,6 +85,7 @@ function required_accessors()
     for f in REQUIRED_ACCESSORS
         methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
     end
+    append!(ms, _type_accessors())
     return ms
 end
 
