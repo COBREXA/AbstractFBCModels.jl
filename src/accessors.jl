@@ -10,7 +10,7 @@ modeling, such as metabolite exchanges, separated forward and reverse reaction
 directions, supplies of enzymatic and genetic material and virtual cell volume,
 etc.
 """
-reactions(a::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :reactions)
+@required reactions(a::AbstractFBCModel)::Vector{String}
 
 """
 $(TYPEDSIGNATURES)
@@ -19,7 +19,7 @@ The number of reactions in the given model. Must be equal to the length of the
 vector returned by [`reactions`](@ref), and may be more efficient for just
 determining the size.
 """
-n_reactions(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_reactions)
+@required n_reactions(a::AbstractFBCModel)::Int
 
 """
 $(TYPEDSIGNATURES)
@@ -29,7 +29,7 @@ Return a vector of metabolite identifiers in a model.
 As with [`reactions`](@ref), some metabolites in models may be virtual,
 representing purely technical equality constraints.
 """
-metabolites(a::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :metabolites)
+@required metabolites(a::AbstractFBCModel)::Vector{String}
 
 """
 $(TYPEDSIGNATURES)
@@ -39,7 +39,7 @@ the vector returned by [`metabolites`](@ref), and may be more efficient for
 just determining the size.
 """
 function n_metabolites end
-n_metabolites(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_metabolites)
+@required n_metabolites(a::AbstractFBCModel)::Int
 
 """
 $(TYPEDSIGNATURES)
@@ -49,7 +49,7 @@ Return identifiers of all genes contained in the model. Empty if none.
 Genes are also sometimes called "gene products" but we write genes for
 simplicity.
 """
-genes(a::AbstractFBCModel)::Vector{String} = unimplemented(typeof(a), :genes)
+@required genes(a::AbstractFBCModel)::Vector{String}
 
 """
 $(TYPEDSIGNATURES)
@@ -60,7 +60,7 @@ by [`genes`](@ref)).
 This may be more efficient than calling [`genes`](@ref) and measuring the
 array.
 """
-n_genes(a::AbstractFBCModel)::Int = unimplemented(typeof(a), :n_genes)
+@required n_genes(a::AbstractFBCModel)::Int
 
 """
 $(TYPEDSIGNATURES)
@@ -94,7 +94,7 @@ The sparse stoichiometric matrix of a given model.
 This usually corresponds to all the equality constraints in the model. The
 matrix must be of size [`n_metabolites`](@ref) by [`n_reactions`](@ref).
 """
-stoichiometry(a::AbstractFBCModel)::SparseMat = unimplemented(typeof(a), :stoichiometry)
+@required stoichiometry(a::AbstractFBCModel)::SparseMat
 
 """
 $(TYPEDSIGNATURES)
@@ -112,8 +112,7 @@ $(TYPEDSIGNATURES)
 
 Lower and upper bounds of all reactions in the model.
 """
-bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
-    unimplemented(typeof(a), :bounds)
+@required bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}}
 
 """
 $(TYPEDSIGNATURES)
@@ -138,7 +137,7 @@ $(TYPEDSIGNATURES)
 
 The objective vector of the model.
 """
-objective(a::AbstractFBCModel)::SparseVec = unimplemented(typeof(a), :objective)
+@required objective(a::AbstractFBCModel)::SparseVec
 
 """
 $(TYPEDSIGNATURES)
@@ -189,8 +188,7 @@ maps the metabolite IDs to their stoichiometric coefficients.
 Using this function may be more efficient in cases than loading the whole
 [`stoichiometry`](@ref).
 """
-reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64} =
-    unimplemented(typeof(a), :reaction_stoichiometry)
+@required reaction_stoichiometry(a::AbstractFBCModel, reaction_id::String)::Dict{String,Float64}
 
 """
 $(TYPEDSIGNATURES)

@@ -3,6 +3,26 @@ import Downloads: download
 import SHA: sha256
 import InteractiveUtils: methodswith
 
+
+const REQUIRED_FUNCTIONS = Function[]
+macro required(sig)
+    call_ex = sig.head == :(::) ? sig.args[1] : sig
+    call_ex.head == :call || error("malformed signature definition")
+    name = call_ex.args[1]
+    name isa Symbol || error("malformed signature definition")
+    
+    model_arg_ex = call_ex.args[2]
+    model_arg_ex.head == :(::) || error("malformed signature definition")
+    model_arg = model_arg_ex.args[1]
+    model_arg isa Symbol || error("malformed signature definition")
+
+    return esc(quote
+        Base.@__doc__ $call_ex = $unimplemented(typeof($model_arg), $(Meta.quot(name))) 
+        push!(REQUIRED_FUNCTIONS, $name)
+        $name
+    end)
+end
+
 unimplemented(t::Type, x::Symbol) =
     error("AbstractFBCModels interface method $x is not implemented for type $t")
 
@@ -10,11 +30,13 @@ unimplemented(t::Type, x::Symbol) =
 $(TYPEDSIGNATURES)
 
 Provide a `methodswith`-style listing of accessors that the model implementors
-should implement.
+may implement.
 
 For typesystem reasons, the list **will not contain** methods for
 [`save`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
 You should implement these as well.
+
+See also [`required_functions`](@ref) for the minimal list that must be implemented.
 """
 function accessors()
     ms = Method[]
@@ -26,6 +48,30 @@ function accessors()
     end
     return ms
 end
+
+"""
+$(TYPEDSIGNATURES)
+
+Provide a `methodswith`-style listing of functions that the model implementors
+must implement to have a functional `AbstractFBCModel`.
+constrast this to the longer list of items that are returned by [`accessors`](@ref).
+The extra elements have sensible defaults based on these required functions.
+Where-as not defining these methods will result in errors.
+Though depending on your models capability relying on those defaults may mean some
+functionality is hidden.
+(e.g. default [`coupling`](@ref) if you don't implement that is to assume none)
+
+"""
+function required_functions()
+    ms = Method[]
+    for f = REQUIRED_FUNCTIONS
+        methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
+    end
+    return ms
+end
+
+
+
 
 """
 $(TYPEDSIGNATURES)
