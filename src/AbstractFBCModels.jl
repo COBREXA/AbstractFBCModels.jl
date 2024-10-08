@@ -30,9 +30,9 @@ module AbstractFBCModels
 using DocStringExtensions
 
 include("types.jl")
+include("utils.jl")
 include("accessors.jl")
 include("io.jl")
-include("utils.jl")
 include("testing.jl")
 include("canonical.jl")
 

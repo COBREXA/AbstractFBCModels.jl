@@ -13,7 +13,7 @@ $(TYPEDSIGNATURES)
 
 Save a model to the given path.
 """
-save(a::AbstractFBCModel, path::String)::Nothing = unimplemented(typeof(a), :save)
+@required save(a::AbstractFBCModel, path::String)
 
 """
 $(TYPEDSIGNATURES)

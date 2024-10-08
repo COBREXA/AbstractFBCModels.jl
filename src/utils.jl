@@ -3,6 +3,28 @@ import Downloads: download
 import SHA: sha256
 import InteractiveUtils: methodswith
 
+
+const REQUIRED_ACCESSORS = Function[]
+macro required(sig)
+    call_ex = sig.head == :(::) ? sig.args[1] : sig
+    call_ex.head == :call || error("malformed signature definition")
+    name = call_ex.args[1]
+    name isa Symbol || error("malformed signature definition")
+
+    model_arg_ex = call_ex.args[2]
+    model_arg_ex.head == :(::) || error("malformed signature definition")
+    model_arg = model_arg_ex.args[1]
+    model_arg isa Symbol || error("malformed signature definition")
+
+    return esc(
+        quote
+            Base.@__doc__ $call_ex = $unimplemented(typeof($model_arg), $(Meta.quot(name)))
+            push!(REQUIRED_ACCESSORS, $name)
+            $name
+        end,
+    )
+end
+
 unimplemented(t::Type, x::Symbol) =
     error("AbstractFBCModels interface method $x is not implemented for type $t")
 
@@ -10,11 +32,13 @@ unimplemented(t::Type, x::Symbol) =
 $(TYPEDSIGNATURES)
 
 Provide a `methodswith`-style listing of accessors that the model implementors
-should implement.
+may implement.
 
 For typesystem reasons, the list **will not contain** methods for
 [`load`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
 You should implement these as well.
+
+See also [`required_accessors`](@ref) for the minimal list that must be implemented.
 """
 function accessors()
     ms = Method[]
@@ -26,6 +50,31 @@ function accessors()
     end
     return ms
 end
+
+"""
+$(TYPEDSIGNATURES)
+
+Provide a `methodswith`-style listing of functions that the model implementors
+must implement to have a functional `AbstractFBCModel`.
+
+The output listing is a subset of the longer list returned by
+[`accessors`](@ref). Some of the accessors may have sensible defaults -- e.g.,
+it is safe to assume an empty default [`coupling`](@ref) if the functions are
+not defined. The accessors which do not possess a natural default and thus
+*must be defined* (and trying to use a model without them will almost certainly
+cause runtime errors) are exactly the ones listed by this function.
+
+"""
+function required_accessors()
+    ms = Method[]
+    for f in REQUIRED_ACCESSORS
+        methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
+    end
+    return ms
+end
+
+
+
 
 """
 $(TYPEDSIGNATURES)
