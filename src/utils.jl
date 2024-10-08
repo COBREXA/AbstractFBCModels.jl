@@ -4,7 +4,7 @@ import SHA: sha256
 import InteractiveUtils: methodswith
 
 
-const REQUIRED_FUNCTIONS = Function[]
+const REQUIRED_ACCESSORS = Function[]
 macro required(sig)
     call_ex = sig.head == :(::) ? sig.args[1] : sig
     call_ex.head == :call || error("malformed signature definition")
@@ -18,7 +18,7 @@ macro required(sig)
 
     return esc(quote
         Base.@__doc__ $call_ex = $unimplemented(typeof($model_arg), $(Meta.quot(name))) 
-        push!(REQUIRED_FUNCTIONS, $name)
+        push!(REQUIRED_ACCESSORS, $name)
         $name
     end)
 end
@@ -36,7 +36,7 @@ For typesystem reasons, the list **will not contain** methods for
 [`save`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
 You should implement these as well.
 
-See also [`required_functions`](@ref) for the minimal list that must be implemented.
+See also [`required_accessors`](@ref) for the minimal list that must be implemented.
 """
 function accessors()
     ms = Method[]
@@ -54,17 +54,18 @@ $(TYPEDSIGNATURES)
 
 Provide a `methodswith`-style listing of functions that the model implementors
 must implement to have a functional `AbstractFBCModel`.
-constrast this to the longer list of items that are returned by [`accessors`](@ref).
-The extra elements have sensible defaults based on these required functions.
-Where-as not defining these methods will result in errors.
-Though depending on your models capability relying on those defaults may mean some
-functionality is hidden.
-(e.g. default [`coupling`](@ref) if you don't implement that is to assume none)
+
+The output listing is a subset of the longer list returned by
+[`accessors`](@ref). Some of the accessors may have sensible defaults -- e.g.,
+it is safe to assume an empty default [`coupling`](@ref) if the functions are
+not defined. The accessors which do not possess a natural default and thus
+*must be defined* (and trying to use a model without them will almost certainly
+cause runtime errors) are exactly the ones listed by this function.
 
 """
-function required_functions()
+function required_accessors()
     ms = Method[]
-    for f = REQUIRED_FUNCTIONS
+    for f = REQUIRED_ACCESSORS
         methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
     end
     return ms

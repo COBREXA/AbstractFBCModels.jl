@@ -14,7 +14,7 @@ A.accessors()
 
 @test length(A.accessors()) == 35 #src
 
-@test length(A.required_functions()) == 11
+@test length(A.required_accessors()) == 11 #src
 
 # You do not need to overload all of them (e.g., if you model does not have any
 # genes you can completely omit all gene-related functions). The main required
