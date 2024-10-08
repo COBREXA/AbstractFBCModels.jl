@@ -13,7 +13,7 @@ Provide a `methodswith`-style listing of accessors that the model implementors
 should implement.
 
 For typesystem reasons, the list **will not contain** methods for
-[`save`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
+[`load`](@ref) and [`filename_extensions`](@ref) that dispatch on type objects.
 You should implement these as well.
 """
 function accessors()
