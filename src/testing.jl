@@ -144,6 +144,10 @@ function run_fbcmodel_file_tests(
             @test Dict(rxns .=> collect(obj)) ==
                   Dict(reactions(m) .=> collect(objective(m)))
 
+            for rxn in rxns
+                @test issetequal(reaction_subsystem(model, rxn), reaction_subsystem(m, rxn))
+            end
+
             # TODO eventually add stricter equality tests
         end
 
