@@ -196,6 +196,13 @@ Using this function may be more efficient in cases than loading the whole
 """
 $(TYPEDSIGNATURES)
 
+Optional string labels that may be used to categorize the reaction.
+"""
+reaction_subsystem(::AbstractFBCModel, reaction_id::String)::Vector{String} = String[]
+
+"""
+$(TYPEDSIGNATURES)
+
 A dictionary of standardized names that may help identifying the reaction. The
 dictionary assigns vectors of possible identifiers to identifier system names,
 e.g. `"Reactome" => ["reactomeID123"]`.
