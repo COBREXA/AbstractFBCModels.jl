@@ -119,7 +119,8 @@ A.objective(m)
 
 A.coupling(m)
 
-# We can check various side things, such as which reactions would and would not work given all gene products disappear:
+# We can check various side things, such as which reactions would and would not
+# work given all gene products disappear:
 products_available = [
     A.reaction_gene_products_available(m, rid, _ -> false) for
     rid in ["forward", "and_back", "exchange1", "exchange2"]
