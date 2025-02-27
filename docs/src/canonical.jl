@@ -150,7 +150,8 @@ end;
 
 # ### Changing identifiers in the model
 #
-# For convenience, function [`identifier_map`](@ref) can be used to mass-update
+# For convenience, function [`identifier_map`](@ref
+# AbstractFBCModels.CanonicalModel.identifier_map) can be used to mass-update
 # all identifiers and references in a whole canonical model. This is useful
 # e.g. when exporting model formats that require certain formatting of the
 # identifiers, such as SBML. We demonstrate this by changing all identifiers in
