@@ -16,6 +16,8 @@ assumptions of the interface.
 """
 abstract type AbstractFBCModel end
 
+export AbstractFBCModel
+
 """
 $(TYPEDEF)
 
@@ -29,6 +31,8 @@ const Maybe{T} = Union{Nothing,T}
 Dictionary of atoms and their abundances in a molecule.
 """
 const MetaboliteFormula = Dict{String,Int}
+
+export MetaboliteFormula
 
 """
 A shortname for a sparse matrix.
@@ -50,6 +54,8 @@ requires gene product `C`.
 """
 const GeneAssociationDNF = Vector{Vector{String}}
 
+export GeneAssociationDNF
+
 """
     Annotations = Dict{String,Vector{String}}
 
@@ -64,6 +70,8 @@ Annotations("PubChem" => ["CID12345", "CID54321"])
 """
 const Annotations = Dict{String,Vector{String}}
 
+export Annotations
+
 """
     Notes = Dict{String,Vector{String}}
 
@@ -71,3 +79,5 @@ Free-form notes about something (e.g. a gene listed by [`genes`](@ref)),
 categorized by "topic".
 """
 const Notes = Dict{String,Vector{String}}
+
+export Notes

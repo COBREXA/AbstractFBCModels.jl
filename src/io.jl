@@ -8,12 +8,16 @@ function load(::Type{A}, path::String) where {A<:AbstractFBCModel}
     unimplemented(A, :load)
 end
 
+export load
+
 """
 $(TYPEDSIGNATURES)
 
 Save a model to the given path.
 """
 @required save(a::AbstractFBCModel, path::String)
+
+export save
 
 """
 $(TYPEDSIGNATURES)
@@ -25,6 +29,8 @@ the model that should be loaded.
 function filename_extensions(::Type{A}) where {A<:AbstractFBCModel}
     unimplemented(A, :filename_extensions)
 end
+
+export filename_extensions
 
 import InteractiveUtils: subtypes
 

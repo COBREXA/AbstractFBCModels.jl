@@ -69,3 +69,5 @@ function identifier_map(
         ),
     )
 end
+
+export identifier_map

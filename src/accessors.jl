@@ -12,6 +12,8 @@ etc.
 """
 @required reactions(a::AbstractFBCModel)::Vector{String}
 
+export reactions
+
 """
 $(TYPEDSIGNATURES)
 
@@ -20,6 +22,8 @@ vector returned by [`reactions`](@ref), and may be more efficient for just
 determining the size.
 """
 @required n_reactions(a::AbstractFBCModel)::Int
+
+export n_reactions
 
 """
 $(TYPEDSIGNATURES)
@@ -31,6 +35,8 @@ representing purely technical equality constraints.
 """
 @required metabolites(a::AbstractFBCModel)::Vector{String}
 
+export metabolites
+
 """
 $(TYPEDSIGNATURES)
 
@@ -38,8 +44,9 @@ The number of metabolites in the given model. Must be equal to the length of
 the vector returned by [`metabolites`](@ref), and may be more efficient for
 just determining the size.
 """
-function n_metabolites end
 @required n_metabolites(a::AbstractFBCModel)::Int
+
+export n_metabolites
 
 """
 $(TYPEDSIGNATURES)
@@ -51,6 +58,8 @@ simplicity.
 """
 @required genes(a::AbstractFBCModel)::Vector{String}
 
+export genes
+
 """
 $(TYPEDSIGNATURES)
 
@@ -61,6 +70,8 @@ This may be more efficient than calling [`genes`](@ref) and measuring the
 array.
 """
 @required n_genes(a::AbstractFBCModel)::Int
+
+export n_genes
 
 """
 $(TYPEDSIGNATURES)
@@ -75,6 +86,8 @@ This behavior will change with next major version.
 """
 couplings(a::AbstractFBCModel)::Vector{String} = String[]
 
+export couplings
+
 """
 $(TYPEDSIGNATURES)
 
@@ -86,6 +99,8 @@ array.
 """
 n_couplings(a::AbstractFBCModel)::Int = length(couplings(a))
 
+export n_couplings
+
 """
 $(TYPEDSIGNATURES)
 
@@ -95,6 +110,8 @@ This usually corresponds to all the equality constraints in the model. The
 matrix must be of size [`n_metabolites`](@ref) by [`n_reactions`](@ref).
 """
 @required stoichiometry(a::AbstractFBCModel)::SparseMat
+
+export stoichiometry
 
 """
 $(TYPEDSIGNATURES)
@@ -107,12 +124,16 @@ must be of size [`n_couplings`](@ref) by [`n_reactions`](@ref).
 """
 coupling(a::AbstractFBCModel)::SparseMat = spzeros(n_couplings(a), n_reactions(a))
 
+export coupling
+
 """
 $(TYPEDSIGNATURES)
 
 Lower and upper bounds of all reactions in the model.
 """
 @required bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}}
+
+export bounds
 
 """
 $(TYPEDSIGNATURES)
@@ -121,6 +142,8 @@ Lower and upper bounds of all couplings in the model.
 """
 coupling_bounds(a::AbstractFBCModel)::Tuple{Vector{Float64},Vector{Float64}} =
     (fill(-Inf, n_couplings(a)), fill(Inf, n_couplings(a)))
+
+export coupling_bounds
 
 """
 $(TYPEDSIGNATURES)
@@ -132,12 +155,16 @@ By default, the balance is assumed to be exactly zero.
 """
 balance(a::AbstractFBCModel)::SparseVec = spzeros(n_metabolites(a))
 
+export balance
+
 """
 $(TYPEDSIGNATURES)
 
 The objective vector of the model.
 """
 @required objective(a::AbstractFBCModel)::SparseVec
+
+export objective
 
 """
 $(TYPEDSIGNATURES)
@@ -162,6 +189,8 @@ reaction_gene_products_available(
     gene_product_available::Function,
 )::Maybe{Bool} = nothing
 
+export reaction_gene_products_available
+
 """
 $(TYPEDSIGNATURES)
 
@@ -179,6 +208,8 @@ reaction_gene_association_dnf(
     reaction_id::String,
 )::Maybe{GeneAssociationDNF} = nothing
 
+export reaction_gene_association_dnf
+
 """
 $(TYPEDSIGNATURES)
 
@@ -193,12 +224,16 @@ Using this function may be more efficient in cases than loading the whole
     reaction_id::String,
 )::Dict{String,Float64}
 
+export reaction_stoichiometry
+
 """
 $(TYPEDSIGNATURES)
 
 Optional string labels that may be used to categorize the reaction.
 """
 reaction_subsystem(::AbstractFBCModel, reaction_id::String)::Vector{String} = String[]
+
+export reaction_subsystem
 
 """
 $(TYPEDSIGNATURES)
@@ -209,6 +244,8 @@ e.g. `"Reactome" => ["reactomeID123"]`.
 """
 reaction_annotations(::AbstractFBCModel, reaction_id::String)::Annotations = Dict()
 
+export reaction_annotations
+
 """
 $(TYPEDSIGNATURES)
 
@@ -217,6 +254,8 @@ the model.
 """
 reaction_notes(::AbstractFBCModel, reaction_id::String)::Notes = Dict()
 
+export reaction_notes
+
 """
 $(TYPEDSIGNATURES)
 
@@ -224,6 +263,7 @@ Name of the given reaction.
 """
 reaction_name(::AbstractFBCModel, reaction_id::String)::Maybe{String} = nothing
 
+export reaction_name
 
 """
 $(TYPEDSIGNATURES)
@@ -234,6 +274,8 @@ formula is not recorded.
 metabolite_formula(::AbstractFBCModel, metabolite_id::String)::Maybe{MetaboliteFormula} =
     nothing
 
+export metabolite_formula
+
 """
 $(TYPEDSIGNATURES)
 
@@ -242,6 +284,8 @@ charge is not recorded.
 """
 metabolite_charge(::AbstractFBCModel, metabolite_id::String)::Maybe{Int} = nothing
 
+export metabolite_charge
+
 """
 $(TYPEDSIGNATURES)
 
@@ -249,6 +293,8 @@ The compartment of the given metabolite in the model. `nothing` if no
 compartment is assigned.
 """
 metabolite_compartment(::AbstractFBCModel, metabolite_id::String)::Maybe{String} = nothing
+
+export metabolite_compartment
 
 """
 $(TYPEDSIGNATURES)
@@ -260,6 +306,8 @@ names, such as `"ChEMBL" => ["123"]` or
 """
 metabolite_annotations(::AbstractFBCModel, metabolite_id::String)::Annotations = Dict()
 
+export metabolite_annotations
+
 """
 $(TYPEDSIGNATURES)
 
@@ -268,12 +316,16 @@ in the model.
 """
 metabolite_notes(::AbstractFBCModel, metabolite_id::String)::Notes = Dict()
 
+export metabolite_notes
+
 """
 $(TYPEDSIGNATURES)
 
 The name of the given metabolite, if assigned.
 """
 metabolite_name(::AbstractFBCModel, metabolite_id::String)::Maybe{String} = nothing
+
+export metabolite_name
 
 """
 $(TYPEDSIGNATURES)
@@ -284,6 +336,8 @@ system names, such as `"PDB" => ["PROT01"]`.
 """
 gene_annotations(::AbstractFBCModel, gene_id::String)::Annotations = Dict()
 
+export gene_annotations
+
 """
 $(TYPEDSIGNATURES)
 
@@ -292,12 +346,16 @@ model.
 """
 gene_notes(::AbstractFBCModel, gene_id::String)::Notes = Dict()
 
+export gene_notes
+
 """
 $(TYPEDSIGNATURES)
 
 The name of the given gene in the model, if recorded.
 """
 gene_name(::AbstractFBCModel, gene_id::String)::Maybe{String} = nothing
+
+export gene_name
 
 """
 $(TYPEDSIGNATURES)
@@ -310,6 +368,8 @@ Using this function may be more efficient in cases than loading the whole
 """
 coupling_weights(a::AbstractFBCModel, coupling_id::String)::Dict{String,Float64} = Dict()
 
+export coupling_weights
+
 """
 $(TYPEDSIGNATURES)
 
@@ -317,6 +377,8 @@ A dictionary of standardized names that may help to identify the corresponding
 coupling.
 """
 coupling_annotations(::AbstractFBCModel, coupling_id::String)::Annotations = Dict()
+
+export coupling_annotations
 
 """
 $(TYPEDSIGNATURES)
@@ -326,9 +388,13 @@ the model.
 """
 coupling_notes(::AbstractFBCModel, coupling_id::String)::Notes = Dict()
 
+export coupling_notes
+
 """
 $(TYPEDSIGNATURES)
 
 The name of the given coupling in the model, if recorded.
 """
 coupling_name(::AbstractFBCModel, coupling_id::String)::Maybe{String} = nothing
+
+export coupling_name
