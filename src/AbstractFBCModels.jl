@@ -34,6 +34,10 @@ include("utils.jl")
 include("accessors.jl")
 include("io.jl")
 include("testing.jl")
+
+module CanonicalModel
 include("canonical.jl")
+include("canonical_utils.jl")
+end
 
 end # module AbstractFBCModel

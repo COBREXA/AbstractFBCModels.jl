@@ -24,8 +24,8 @@
 
 # ## Defining the model
 #
-# For convenience in the later explanation, we list the whole definition of the
-# module here:
+# For convenience in the later explanation, we list the definition of the
+# interface for `AbstractFBCModels.CanonicalModel.Model` here:
 
 # ##LIST src/canonical.jl
 
@@ -147,3 +147,46 @@ mktempdir() do dir
     A.save(m, path)
     A.run_fbcmodel_file_tests(Model, path, name = "small model")
 end;
+
+# ### Changing identifiers in the model
+#
+# For convenience, function [`identifier_map`](@ref) can be used to mass-update
+# all identifiers and references in a whole canonical model. This is useful
+# e.g. when exporting model formats that require certain formatting of the
+# identifiers, such as SBML. We demonstrate this by changing all identifiers in
+# the above model to have a "type prefix" -- reaction identifiers start with
+# `R_`, metabolites start with `M_`, etc.
+
+import AbstractFBCModels.CanonicalModel: identifier_map
+
+m2 = identifier_map(
+    m,
+    reaction_map = id -> "R_" * id,
+    metabolite_map = id -> "M_" * id,
+    gene_map = id -> "G_" * id,
+    compartment_map = id -> "C_" * id,
+    coupling_map = id -> "X_" * id,
+);
+
+@test all(startswith("R_"), keys(m2.reactions)) #src
+@test all(startswith("M_"), keys(m2.metabolites)) #src
+@test all(startswith("G_"), keys(m2.genes)) #src
+@test all(startswith("C_"), keys(m2.compartments)) #src
+@test all(startswith("X_"), keys(m2.couplings)) #src
+
+mktempdir() do dir #src
+    path = joinpath(dir, "model.canonical-serialized-fbc") #src
+    A.save(m2, path) #src
+    res = A.run_fbcmodel_file_tests(Model, path, name = "reidentified model") #src
+end #src
+
+# We can see that the identifiers have changed:
+
+m2.reactions
+@test "R_and_back" in keys(m2.reactions) #src
+
+# ...together with the references:
+
+m2.reactions["R_forward"].stoichiometry
+
+@test "M_m1" in keys(m2.reactions["R_forward"].stoichiometry) #src
