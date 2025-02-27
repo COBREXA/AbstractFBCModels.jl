@@ -149,7 +149,7 @@ mktempdir() do dir
     A.run_fbcmodel_file_tests(Model, path, name = "small model")
 end;
 
-# ### Changing identifiers in the model
+# ## Changing identifiers in the model
 #
 # For convenience, function [`identifier_map`](@ref
 # AbstractFBCModels.CanonicalModel.identifier_map) can be used to mass-update
