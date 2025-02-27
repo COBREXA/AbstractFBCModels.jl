@@ -11,10 +11,10 @@
 #
 # - If you need an "intermediate step" when converting complicated FBC models
 #   to other types, the canonical model is guaranteed not to lose any
-#   information, yet perform relatively well when re-exporting the information
+#   information, yet performs relatively well when re-exporting the information
 #   via the accessors.
 # - If you need to make quick modifications to another model type that does not
-#   admin easy mutation (e.g., it is made of immutable `struct`s), you can
+#   admit easy mutation (e.g., it is made of immutable `struct`s), you can
 #   convert to the canonical model and make the small fixes in there.
 # - Here, we use it for describing how to "perform" your own definition of
 #   model type, and demonstrate the use of the pre-defined testing framework on
