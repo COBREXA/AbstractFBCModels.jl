@@ -24,6 +24,8 @@ Base.@kwdef mutable struct Reaction
     notes::A.Notes = A.Notes()
 end
 
+export Reaction
+
 Base.show(io::Base.IO, ::MIME"text/plain", x::Reaction) = A.pretty_print_kwdef(io, x)
 
 """
@@ -44,6 +46,8 @@ Base.@kwdef mutable struct Metabolite
     notes::A.Notes = A.Notes()
 end
 
+export Metabolite
+
 Base.show(io::Base.IO, ::MIME"text/plain", x::Metabolite) = A.pretty_print_kwdef(io, x)
 
 """
@@ -59,6 +63,8 @@ Base.@kwdef mutable struct Gene
     annotations::A.Annotations = A.Annotations()
     notes::A.Notes = A.Notes()
 end
+
+export Gene
 
 Base.show(io::Base.IO, ::MIME"text/plain", x::Gene) = A.pretty_print_kwdef(io, x)
 
@@ -79,6 +85,8 @@ Base.@kwdef mutable struct Coupling
     annotations::A.Annotations = A.Annotations()
     notes::A.Notes = A.Notes()
 end
+
+export Coupling
 
 Base.show(io::Base.IO, ::MIME"text/plain", x::Coupling) = A.pretty_print_kwdef(io, x)
 
@@ -105,6 +113,8 @@ Base.@kwdef mutable struct Model <: A.AbstractFBCModel
     genes::Dict{String,Gene} = Dict()
     couplings::Dict{String,Coupling} = Dict()
 end
+
+export Model
 
 Base.show(io::Base.IO, ::MIME"text/plain", x::Model) = A.pretty_print_kwdef(io, x)
 

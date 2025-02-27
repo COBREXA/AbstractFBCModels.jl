@@ -156,6 +156,8 @@ function run_fbcmodel_file_tests(
     end
 end
 
+export run_fbcmodel_file_tests
+
 """
 $(TYPEDSIGNATURES)
 
@@ -210,3 +212,5 @@ function run_fbcmodel_type_tests(::Type{X}) where {X<:AbstractFBCModel}
         rt(coupling_notes, Notes, X, String)
     end
 end
+
+export run_fbcmodel_type_tests

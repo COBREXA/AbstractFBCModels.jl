@@ -3,8 +3,8 @@ import Downloads: download
 import SHA: sha256
 import InteractiveUtils: methodswith
 
-
 const REQUIRED_ACCESSORS = Function[]
+
 macro required(sig)
     call_ex = sig.head == :(::) ? sig.args[1] : sig
     call_ex.head == :call || error("malformed signature definition")
@@ -32,7 +32,6 @@ end
 unimplemented(t::Type, x::Symbol) =
     error("AbstractFBCModels interface method $x is not implemented for type $t")
 
-
 """
 $(TYPEDSIGNATURES)
 
@@ -52,6 +51,8 @@ function accessors()
     return ms
 end
 
+export accessors
+
 function _type_accessors()
     # special case: some "accessors" take the Type argument instead of actual instance
     ms = Method[]
@@ -68,7 +69,6 @@ function _type_accessors()
 
     return ms
 end
-
 
 """
 $(TYPEDSIGNATURES)
@@ -93,8 +93,7 @@ function required_accessors()
     return ms
 end
 
-
-
+export required_accessors
 
 """
 $(TYPEDSIGNATURES)
@@ -130,6 +129,8 @@ function download_data_file(url, path, hash)
     return path
 end
 
+export download_data_file
+
 """
 $(TYPEDSIGNATURES)
 
@@ -145,3 +146,5 @@ function reaction_gene_products_available_from_dnf(
     gss = reaction_gene_association_dnf(m, reaction_id)
     isnothing(gss) ? nothing : any(gs -> all(available, gs), gss)
 end
+
+export reaction_gene_products_available_from_dnf
