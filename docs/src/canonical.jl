@@ -171,7 +171,10 @@ m2 = identifier_map(
 @test all(startswith("R_"), keys(m2.reactions)) #src
 @test all(startswith("M_"), keys(m2.metabolites)) #src
 @test all(startswith("G_"), keys(m2.genes)) #src
-@test all(startswith("C_"), keys(m2.compartments)) #src
+@test all( #src
+    startswith("C_"), #src
+    [v.compartment for v in values(m2.metabolites) if !isnothing(v.compartment)], #src
+) #src
 @test all(startswith("X_"), keys(m2.couplings)) #src
 
 mktempdir() do dir #src
