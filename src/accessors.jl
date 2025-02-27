@@ -38,7 +38,6 @@ The number of metabolites in the given model. Must be equal to the length of
 the vector returned by [`metabolites`](@ref), and may be more efficient for
 just determining the size.
 """
-function n_metabolites end
 @required n_metabolites(a::AbstractFBCModel)::Int
 
 """
