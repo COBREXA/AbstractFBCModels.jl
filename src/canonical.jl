@@ -1,6 +1,4 @@
 
-module CanonicalModel
-
 using DocStringExtensions
 
 import ..AbstractFBCModels as A
@@ -237,5 +235,3 @@ function Base.convert(::Type{Model}, x::A.AbstractFBCModel)
         ),
     )
 end
-
-end # module CanonicalModel
