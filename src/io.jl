@@ -13,7 +13,9 @@ $(TYPEDSIGNATURES)
 
 Save a model to the given path.
 """
-@required save(a::AbstractFBCModel, path::String)
+function save(a::A, path::String) where {A<:AbstractFBCModel}
+    unimplemented(A, :save)
+end
 
 """
 $(TYPEDSIGNATURES)
