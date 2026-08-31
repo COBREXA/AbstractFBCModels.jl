@@ -31,7 +31,7 @@ $(TYPEDSIGNATURES)
 
 Serialize a model to a `String`
 """
-function save_to_string(a::A, data::String) where {A<:AbstractFBCModel}
+function save_to_string(a::A) where {A<:AbstractFBCModel}
     unimplemented(A, :save_to_string)
 end
 
