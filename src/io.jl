@@ -20,6 +20,24 @@ end
 """
 $(TYPEDSIGNATURES)
 
+Deserialize a model from a `String`.
+"""
+function load_from_string(::Type{A}, data::String) where {A<:AbstractFBCModel}
+    unimplemented(A, :load_from_string)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Serialize a model to a `String`
+"""
+function save_to_string(a::A, data::String) where {A<:AbstractFBCModel}
+    unimplemented(A, :save_to_string)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
 A vector of filename extensions that are common for files that contain the
 given metabolic model type. This is used by [`load`](@ref) to guess the type of
 the model that should be loaded.

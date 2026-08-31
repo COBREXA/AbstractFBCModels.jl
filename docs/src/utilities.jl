@@ -12,9 +12,9 @@ import AbstractFBCModels as A
 
 A.accessors()
 
-@test length(A.accessors()) == 38 #src
+@test length(A.accessors()) == 40 #src
 
-@test length(A.required_accessors()) == 12 #src
+@test length(A.required_accessors()) == 11 #src
 
 # You do not need to overload all of them (e.g., if you model does not have any
 # genes you can completely omit all gene-related functions). The main required
