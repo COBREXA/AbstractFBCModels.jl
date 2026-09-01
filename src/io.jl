@@ -22,7 +22,7 @@ $(TYPEDSIGNATURES)
 
 Deserialize a model from a `String`.
 """
-function load_from_string(::Type{A}, data::String) where {A<:AbstractFBCModel}
+function load_from_string(::Type{A}, data::AbstractString) where {A<:AbstractFBCModel}
     unimplemented(A, :load_from_string)
 end
 
