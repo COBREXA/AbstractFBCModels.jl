@@ -48,14 +48,21 @@ function accessors()
         end
     end
 
-    append!(ms, _type_accessors())
+    append!(
+        ms,
+        _type_accessors(
+            AbstractFBCModels.load,
+            AbstractFBCModels.load_from_string,
+            AbstractFBCModels.filename_extensions,
+        ),
+    )
     return ms
 end
 
-function _type_accessors()
+function _type_accessors(fs...)
     # special case: some "accessors" take the Type argument instead of actual instance
     ms = Method[]
-    for f in (AbstractFBCModels.load, AbstractFBCModels.filename_extensions)
+    for f in fs
         for m in methods(f)
             m.sig isa UnionAll || continue
             # Deep magic: basically this matches on `f(::Type{A},...) where A<:AbstractFBCModel`
@@ -89,7 +96,7 @@ function required_accessors()
     for f in REQUIRED_ACCESSORS
         methodswith(AbstractFBCModels.AbstractFBCModel, f, ms)
     end
-    append!(ms, _type_accessors())
+    append!(ms, _type_accessors(AbstractFBCModels.filename_extensions))
     return ms
 end
 
