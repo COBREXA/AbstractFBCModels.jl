@@ -13,7 +13,27 @@ $(TYPEDSIGNATURES)
 
 Save a model to the given path.
 """
-@required save(a::AbstractFBCModel, path::String)
+function save(a::A, path::String) where {A<:AbstractFBCModel}
+    unimplemented(A, :save)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Deserialize a model from a `String`.
+"""
+function load_from_string(::Type{A}, data::AbstractString) where {A<:AbstractFBCModel}
+    unimplemented(A, :load_from_string)
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Serialize a model to a `String`
+"""
+function save_to_string(a::A) where {A<:AbstractFBCModel}
+    unimplemented(A, :save_to_string)
+end
 
 """
 $(TYPEDSIGNATURES)

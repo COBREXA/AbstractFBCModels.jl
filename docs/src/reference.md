@@ -42,3 +42,10 @@ Pages = ["src/utils.jl"]
 Modules = [AbstractFBCModels, AbstractFBCModels.CanonicalModel]
 Pages = ["src/canonical.jl"]
 ```
+
+### Utilities for canonical models
+
+```@autodocs
+Modules = [AbstractFBCModels, AbstractFBCModels.CanonicalModel]
+Pages = ["src/canonical_utils.jl"]
+```

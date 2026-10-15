@@ -47,6 +47,8 @@
 
     @test_throws ErrorException A.load(NotAModel, ".")
     @test_throws ErrorException A.save(m, ".")
+    @test_throws ErrorException A.load_from_string(NotAModel, "such model")
+    @test_throws ErrorException A.save_to_string(m)
     @test_throws ErrorException A.filename_extensions(NotAModel)
     @test_throws ErrorException show(stdout, MIME"text/plain"(), m)
 
