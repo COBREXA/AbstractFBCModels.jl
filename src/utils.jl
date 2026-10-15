@@ -56,6 +56,7 @@ function accessors()
             AbstractFBCModels.filename_extensions,
         ),
     )
+    unique!(ms)
     return ms
 end
 
