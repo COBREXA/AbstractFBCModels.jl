@@ -34,6 +34,7 @@ function run_fbcmodel_file_tests(
     path::String;
     name::String = path,
     test_save::Bool = true,
+    test_strings::Bool = false,
 ) where {X<:AbstractFBCModel}
     @testset "Model `$name' of type $X" begin
 
@@ -131,8 +132,11 @@ function run_fbcmodel_file_tests(
             load(X, p)
         end : m2
 
+        # test serialization through strings
+        m4 = test_strings ? load_from_string(X, save_to_string(m3)) : m3
+
         # test conversion through the canonical model (should preserve everything)
-        m4 = convert(X, convert(CanonicalModel.Model, model))
+        m5 = convert(X, convert(CanonicalModel.Model, model))
 
         # all the variants loaded from other sources should be equivalent
         for m in [m2, m3, m4]
