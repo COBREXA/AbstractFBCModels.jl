@@ -12,7 +12,7 @@ import AbstractFBCModels as A
 
 A.accessors()
 
-@test length(A.accessors()) == 68 #src
+@test length(A.accessors()) == 40 #src
 
 @test length(A.required_accessors()) == 11 #src
 
