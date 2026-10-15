@@ -1,7 +1,7 @@
 name = "AbstractFBCModels"
 uuid = "5a4f3dfa-1789-40f8-8221-69268c29937c"
 authors = ["Authors of AbstractFBCModels.jl"]
-version = "1.4.0"
+version = "1.4.1"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
@@ -13,14 +13,14 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-DocStringExtensions = "0.8, 0.9"
+DocStringExtensions = "0.8, 0.9, 0.10"
 Downloads = "1"
 InteractiveUtils = "1"
 SHA = "0.7, 1"
 Serialization = "1"
 SparseArrays = "1"
 Test = "1"
-julia = "1.6"
+julia = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
